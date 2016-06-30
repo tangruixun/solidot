@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Solidot</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_settings">Settings</string>
+    <string name="menu_nav_home">全部</string>
+    <string name="rssurl">http://www.solidot.org/index.rss</string>
+    <string name="rss2url">http://feeds2.feedburner.com/solidot</string>
+</resources>
