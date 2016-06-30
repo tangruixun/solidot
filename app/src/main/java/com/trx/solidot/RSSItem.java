@@ -1,9 +1,13 @@
 package com.trx.solidot;
 
+import android.content.Context;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by TRX on 06/28/2016.
  */
-public class RSSItem {
+public class RSSItem implements Parcelable {
 
     private String id;
     private String title;
@@ -15,9 +19,54 @@ public class RSSItem {
     private String dc_date;
     private String slash_department;
 
+    private Context context;
 
-    public RSSItem () {
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(id);
+        parcel.writeString(title);
+        parcel.writeString(link);
+        parcel.writeString(description);
+        parcel.writeString(pubDate);
+        parcel.writeString(guid);
+        parcel.writeString(dc_creator);
+        parcel.writeString(dc_date);
+        parcel.writeString(slash_department);
+    }
+
+    public static final Parcelable.Creator<RSSItem> CREATOR = new Parcelable.Creator<RSSItem>() {
+        public RSSItem createFromParcel(Parcel in) {
+            return new RSSItem(in);
+        }
+
+        public RSSItem[] newArray(int size) {
+            return new RSSItem[size];
+        }
+    };
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    public RSSItem (Context c) {
+        context = c;
+    }
+
+    public RSSItem (Parcel parcel) {
+        id = parcel.readString();
+        title = parcel.readString();
+        link = parcel.readString();
+        description = parcel.readString();
+        pubDate = parcel.readString();
+        guid = parcel.readString();
+        dc_creator = parcel.readString();
+        dc_date = parcel.readString();
+        slash_department = parcel.readString();
     }
 
     public RSSItem(String title, String link, String description, String pubDate, String guid, String dc_creator, String dc_date, String slash_department) {
@@ -96,11 +145,18 @@ public class RSSItem {
     }
 
     public String getSlash_department() {
+        if (!slash_department.trim().equals("")) {
+            // do not change slash_department itself
+            return context.getString(R.string.from) + slash_department + context.getString(R.string.department);
+        }
+
         return slash_department;
     }
 
     public String getTitle() {
         return title;
     }
+
+
 }
 

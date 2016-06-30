@@ -1,5 +1,7 @@
 package com.trx.solidot;
 
+import android.content.Context;
+
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
@@ -11,25 +13,31 @@ import java.util.ArrayList;
  */
 public class RSSHandler extends DefaultHandler {
 
+    private Context context;
     private ArrayList<RSSItem> li;
-    private RSSItem item;
+    private RSSItem item = null;
     int currentstate = 0;
-    final int RSS_STATUS_TITLE = 1;//若是title标签,记做 1,注意有两个title,但我们都保存在item的title成员变量中
-    final int RSS_STATUS_LINK = 2;//若是link标签,记做 2
-    final int RSS_STATUS_DESCRIPTION = 3;//若是description标签,记做 3
+    final int RSS_STATUS_TITLE = 1; //若是title标签,记做 1,注意有两个title,但我们都保存在item的title成员变量中
+    final int RSS_STATUS_LINK = 2; //若是link标签,记做 2
+    final int RSS_STATUS_DESCRIPTION = 3; //若是description标签,记做 3
     final int RSS_STATUS_PUBDATE = 4; //若是pubdate标签,记做 4,注意有两个pubdate,但我们都保存在item的pubdate成员变量中
     final int RSS_STATUS_GUID = 5;
     final int RSS_STATUS_DC_CREATOR = 6;
     final int RSS_STATUS_DC_DATE = 7;
     final int RSS_STATUS_SLASH_DEPARTMENT = 8;
 
-    public ArrayList<RSSItem> getParsedData() {//這個是我們自己寫的，沒有一定要覆寫
+    public RSSHandler(Context c) {
+        context = c;
+    }
+
+    public ArrayList<RSSItem> getParsedData() {
+        //這個是我們自己寫的，沒有一定要覆寫
         return li;
     }
 
     @Override
     public void startDocument() throws SAXException {
-        super.star
+        super.startDocument();
         li = new ArrayList<RSSItem>();//在程式解析之初，先建立一個ArrayList容器
     }
 
@@ -45,59 +53,59 @@ public class RSSHandler extends DefaultHandler {
         //这个方法在解析标签开始标记时执行,一般我们需要在该方法取得标签属性值,但由于我们的rss文档
         //中并没有任何我们关心的标签属性,因此我们主要在这里进行的是设置标记变量currentstate,以
         //标记我们处理到哪个标签
-        item = new RSSItem();//在程式解析之初，先產生實體
 
-        if (localName.equals("channel")) {
+        if (qName.equals("channel")) {
             //channel这个标签没有任何值得我们关心的内容，所以currentstate置为0
             currentstate = 0;
             return;
         }
-        if (localName.equals("item")) {
+        if (qName.equals("item")) {
             //若是item标签,则重新构造一个RSSItem,从而把已有(已经解析过的)item数据扔掉,当
             //然事先是已经保存到rssFeed的itemlist集合中了
+            item = new RSSItem(context);//在程式解析之初，先產生實體
             return;
         }
-        if (localName.equals("title")) {
+        if (qName.equals("title") && item != null) {
             //若是title标签,置currentstate为1,表明这是我们关心的数据,这样在characters
             //方法中会把元素内容保存到rssItem变量中
 
             currentstate = RSS_STATUS_TITLE;
             return;
         }
-        if (localName.equals("description")) {
+        if (qName.equals("description") && item != null) {
             //若是description标签,置currentstate为3,表明这是我们关心的数据,这样在characters
             //方法中会把元素内容保存到rssItem变量中
 
             currentstate = RSS_STATUS_DESCRIPTION;
             return;
         }
-        if (localName.equals("link")) {
+        if (qName.equals("link") && item != null) {
             //若是link标签,置currentstate为2,表明这是我们关心的数据,这样在characters
             //方法中会把元素内容保存到rssItem变量中
 
             currentstate = RSS_STATUS_LINK;
             return;
         }
-        if (localName.equals("pubDate")) {
+        if (qName.equals("pubDate") && item != null) {
             //若是pubDate标签,置currentstate为5,表明这是我们关心的数据,这样在characters
             //方法中会把元素内容保存到rssItem变量中
 
             currentstate = RSS_STATUS_PUBDATE;
             return;
         }
-        if (localName.equals("guid")) {
+        if (qName.equals("guid") && item != null) {
             currentstate = RSS_STATUS_GUID;
             return;
         }
-        if (localName.equals("dc:creator")) {
+        if (qName.equals("dc:creator") && item != null) {
             currentstate = RSS_STATUS_DC_CREATOR;
             return;
         }
-        if (localName.equals("dc:date")) {
+        if (qName.equals("dc:date") && item != null) {
             currentstate = RSS_STATUS_DC_DATE;
             return;
         }
-        if (localName.equals("slash:department")) {
+        if (qName.equals("slash:department") && item != null) {
             currentstate = RSS_STATUS_SLASH_DEPARTMENT;
             return;
         }
@@ -108,8 +116,9 @@ public class RSSHandler extends DefaultHandler {
     public void endElement(String uri, String localName, String qName) throws SAXException {
 
         //如果解析一个item节点结束，就将rssItem添加到rssFeed中。
-        if (localName.equals("item")) {
+        if (qName.equals("item") && item != null) {
             li.add(item);
+            item = null;
             return;
         }
         super.endElement(uri, localName, qName);
@@ -139,19 +148,19 @@ public class RSSHandler extends DefaultHandler {
                 currentstate = 0;
                 break;
             case RSS_STATUS_GUID:
-                item.setPubDate(theString);
+                item.setGuid(theString);
                 currentstate = 0;
                 break;
             case RSS_STATUS_DC_CREATOR:
-                item.setPubDate(theString);
+                item.setDc_creator(theString);
                 currentstate = 0;
                 break;
             case RSS_STATUS_DC_DATE:
-                item.setPubDate(theString);
+                item.setDc_date(theString);
                 currentstate = 0;
                 break;
             case RSS_STATUS_SLASH_DEPARTMENT:
-                item.setPubDate(theString);
+                item.setSlash_department(theString);
                 currentstate = 0;
                 break;
             default:

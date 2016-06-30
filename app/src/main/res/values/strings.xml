@@ -8,4 +8,10 @@
     <string name="menu_nav_home">全部</string>
     <string name="rssurl">http://www.solidot.org/index.rss</string>
     <string name="rss2url">http://feeds2.feedburner.com/solidot</string>
+    <string name="publishedat"> 发表于 </string>
+    <string name="from">来自</string>
+    <string name="department">部门 </string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

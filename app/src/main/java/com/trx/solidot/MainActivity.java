@@ -1,5 +1,6 @@
 package com.trx.solidot;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -16,7 +17,9 @@ import android.view.MenuItem;
 import android.view.View;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, SolidotListFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+        SolidotListFragment.OnTitleSelectedListener,
+        ArticleFragment.OnArticleFragmentInteractionListener {
 
     private boolean viewIsAtHome;
 
@@ -56,8 +59,8 @@ public class MainActivity extends AppCompatActivity
 
         switch (viewId) {
             case R.id.nav_home:
-                fragment = SolidotListFragment.newInstance ();
-                title  = getString(R.string.menu_nav_home);
+                fragment = SolidotListFragment.newInstance();
+                title = getString(R.string.menu_nav_home);
                 viewIsAtHome = true;
                 break;
             /*
@@ -135,12 +138,46 @@ public class MainActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        displayView (id);
+        displayView(id);
         return true;
     }
 
     @Override
-    public void onListFragmentInteraction(RSSItem item) {
+    public void onArticleSelected(RSSItem item) {
+        String strLink = item.getLink();
+
+        // The user selected the headline of an article from the HeadlinesFragment
+        // Do something here to display that article
+
+        ArticleFragment articleFrag = (ArticleFragment) getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+
+        if (articleFrag != null) {
+            // If article frag is available, we're in two-pane layout...
+            // Call a method in the ArticleFragment to update its content
+            articleFrag.updateArticleView(strLink);
+        } else {
+
+            // Otherwise, we're in the one-pane layout and must swap frags...
+            // Create fragment and give it an argument for the selected article
+            ArticleFragment newFragment = new ArticleFragment();
+            Bundle args = new Bundle();
+            args.putString(ArticleFragment.ARG_LINK, strLink);
+            newFragment.setArguments(args);
+
+            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+            // Replace whatever is in the fragment_container view with this fragment,
+            // and add the transaction to the back stack so the user can navigate back
+            transaction.replace(R.id.content_frame, newFragment);
+            transaction.addToBackStack(null);
+
+            // Commit the transaction
+            transaction.commit();
+        }
+    }
+
+    @Override
+    public void onArticleFragmentInteraction(Uri uri) {
 
     }
 }

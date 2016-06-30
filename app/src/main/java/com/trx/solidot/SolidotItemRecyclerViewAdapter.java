@@ -6,21 +6,21 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.trx.solidot.SolidotListFragment.OnListFragmentInteractionListener;
+import com.trx.solidot.SolidotListFragment.OnTitleSelectedListener;
 
 import java.util.List;
 
 /**
  * {@link RecyclerView.Adapter} that can display a {@link RSSItem} and makes a call to the
- * specified {@link OnListFragmentInteractionListener}.
+ * specified {@link OnTitleSelectedListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class SolidotItemRecyclerViewAdapter extends RecyclerView.Adapter<SolidotItemRecyclerViewAdapter.ViewHolder> {
 
     private final List<RSSItem> solidotArticleList;
-    private final OnListFragmentInteractionListener mListener;
+    private final OnTitleSelectedListener mListener;
 
-    public SolidotItemRecyclerViewAdapter(List<RSSItem> items, OnListFragmentInteractionListener listener) {
+    public SolidotItemRecyclerViewAdapter(List<RSSItem> items, OnTitleSelectedListener listener) {
         solidotArticleList = items;
         mListener = listener;
     }
@@ -35,8 +35,12 @@ public class SolidotItemRecyclerViewAdapter extends RecyclerView.Adapter<Solidot
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = solidotArticleList.get(position);
-        holder.mIdView.setText(solidotArticleList.get(position).getId());
+        //holder.mIdView.setText(solidotArticleList.get(position).getId());
         holder.mTitleView.setText(solidotArticleList.get(position).getTitle());
+        holder.mDescriptionView.setText(solidotArticleList.get(position).getDescription());
+        holder.mPubdateView.setText(solidotArticleList.get(position).getPubDate());
+        holder.mDccreatorView.setText(solidotArticleList.get(position).getDc_creator());
+        holder.mSlashdepartmentView.setText(solidotArticleList.get(position).getSlash_department());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,7 +48,7 @@ public class SolidotItemRecyclerViewAdapter extends RecyclerView.Adapter<Solidot
                 if (null != mListener) {
                     // Notify the active callbacks interface (the activity, if the
                     // fragment is attached to one) that an item has been selected.
-                    mListener.onListFragmentInteraction(holder.mItem);
+                    mListener.onArticleSelected( holder.mItem);
                 }
             }
         });
@@ -57,24 +61,24 @@ public class SolidotItemRecyclerViewAdapter extends RecyclerView.Adapter<Solidot
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
+        //public final TextView mIdView;
         public final TextView mTitleView;
         public final TextView mDescriptionView;
-        public final TextView mpubdateView;
-        public final TextView dccreatorView;
-        public final TextView slashdepartmentView;
+        public final TextView mPubdateView;
+        public final TextView mDccreatorView;
+        public final TextView mSlashdepartmentView;
 
         public RSSItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.id);
+            //mIdView = (TextView) view.findViewById(R.id.id);
             mTitleView = (TextView) view.findViewById(R.id.title);
             mDescriptionView = (TextView) view.findViewById(R.id.description);
-            mpubdateView = (TextView) view.findViewById(R.id.pubdate);
-            dccreatorView = (TextView) view.findViewById(R.id.dccreator);
-            slashdepartmentView = (TextView) view.findViewById(R.id.slashdepartment);
+            mPubdateView = (TextView) view.findViewById(R.id.pubdate);
+            mDccreatorView = (TextView) view.findViewById(R.id.dccreator);
+            mSlashdepartmentView = (TextView) view.findViewById(R.id.slashdepartment);
         }
 
         @Override
