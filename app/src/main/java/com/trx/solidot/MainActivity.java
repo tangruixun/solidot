@@ -1,10 +1,10 @@
 package com.trx.solidot;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
@@ -16,12 +16,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         SolidotListFragment.OnTitleSelectedListener,
         ArticleFragment.OnArticleFragmentInteractionListener {
 
     private boolean viewIsAtHome;
+    private AdView adView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +34,46 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        adView = (AdView) findViewById(R.id.adView);
+        final AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                RSSItem tempItem = new RSSItem (getString(R.string.submit), getString(R.string.submiturl), "", "", "", "", "", "");
+                String strLink = tempItem.getLink();
+                String strTitle = tempItem.getTitle();
+
+                // The user selected the headline of an article from the HeadlinesFragment
+                // Do something here to display that article
+
+                ArticleFragment articleFrag = (ArticleFragment) getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+
+                if (articleFrag != null) {
+                    // If article frag is available, we're in two-pane layout...
+                    // Call a method in the ArticleFragment to update its content
+                    articleFrag.updateArticleView(strLink);
+                } else {
+                    // Otherwise, we're in the one-pane layout and must swap frags...
+                    // Create fragment and give it an argument for the selected article
+                    ArticleFragment newFragment = new ArticleFragment();
+                    Bundle args = new Bundle();
+                    args.putString(ArticleFragment.ARG_LINK, strLink);
+                    args.putString(ArticleFragment.ARG_TITLE, strTitle);
+                    newFragment.setArguments(args);
+
+                    FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+
+                    // Replace whatever is in the fragment_container view with this fragment,
+                    // and add the transaction to the back stack so the user can navigate back
+                    transaction.replace(R.id.content_frame, newFragment);
+                    transaction.addToBackStack(null);
+
+                    // Commit the transaction
+                    transaction.commit();
+                }
             }
         });
 
@@ -49,9 +87,31 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         displayView(R.id.nav_home);
-
     }
 
+    @Override
+    protected void onDestroy() {
+        if (adView != null) {
+            adView.destroy();
+        }
+        super.onDestroy();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        if (adView != null) {
+            adView.pause();
+        }
+        super.onPause();
+    }
 
     public void displayView(int viewId) {
         Fragment fragment = null;
@@ -62,43 +122,41 @@ public class MainActivity extends AppCompatActivity
                 fragment = SolidotListFragment.newInstance();
                 title = getString(R.string.menu_nav_home);
                 viewIsAtHome = true;
+
+                if (fragment != null) {
+                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                    ft.replace(R.id.content_frame, fragment);
+                    ft.commit();
+                }
+
+                // set the toolbar title
+                if (getSupportActionBar() != null) {
+                    getSupportActionBar().setTitle(title);
+                }
                 break;
-            /*
-            case R.id.nav_ping:
-                fragment = PingFragment.newInstance();
-                title  = getString(R.string.frag_title_ping);
-                viewIsAtHome = true;
+
+            case R.id.nav_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                break;
+
+            case R.id.nav_share_this_app:
+                Intent shareIntent=new Intent(android.content.Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_thisappsubject));
+                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.share_thisapptext));
+                startActivity(Intent.createChooser(shareIntent, getString (R.string.share_via)));
                 break;
 
             case R.id.nav_about:
-                fragment = AboutFragment.newInstance();
-                title = getString(R.string.frag_title_about);
-                viewIsAtHome = false;
+                Intent aboutIntent = new Intent(this, AboutActivity.class);
+                startActivity(aboutIntent);
                 break;
-
-            case R.id.nav_share:
-                Intent shareIntent=new Intent(android.content.Intent.ACTION_SEND);
-                shareIntent.setType("text/plain");
-                shareIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.share_subject));
-                shareIntent.putExtra(android.content.Intent.EXTRA_TEXT, getString(R.string.share_text));
-                startActivity(Intent.createChooser(shareIntent, getString (R.string.share_via)));*/
-        }
-
-        if (fragment != null) {
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            ft.replace(R.id.content_frame, fragment);
-            ft.commit();
-        }
-
-        // set the toolbar title
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -125,14 +183,13 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        //if (id == R.id.action_settings) {
+        //    return true;
+        //}
 
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -145,6 +202,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onArticleSelected(RSSItem item) {
         String strLink = item.getLink();
+        String strTitle = item.getTitle();
 
         // The user selected the headline of an article from the HeadlinesFragment
         // Do something here to display that article
@@ -156,12 +214,12 @@ public class MainActivity extends AppCompatActivity
             // Call a method in the ArticleFragment to update its content
             articleFrag.updateArticleView(strLink);
         } else {
-
             // Otherwise, we're in the one-pane layout and must swap frags...
             // Create fragment and give it an argument for the selected article
             ArticleFragment newFragment = new ArticleFragment();
             Bundle args = new Bundle();
             args.putString(ArticleFragment.ARG_LINK, strLink);
+            args.putString(ArticleFragment.ARG_TITLE, strTitle);
             newFragment.setArguments(args);
 
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();

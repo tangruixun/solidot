@@ -4,9 +4,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.trx.solidot.ArticleFragment">
-
-    <WebView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/webView" />
+        android:orientation="vertical">
+        <ProgressBar
+            android:id="@+id/pbar"
+            android:layout_width="match_parent"
+            android:layout_height="10dp"
+            style="?android:attr/progressBarStyleHorizontal" />
+        <WebView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/webView" />
+    </LinearLayout>
 </FrameLayout>

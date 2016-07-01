@@ -52,11 +52,6 @@ public class RSSItem implements Parcelable {
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-    public RSSItem (Context c) {
-        context = c;
-    }
-
     public RSSItem (Parcel parcel) {
         id = parcel.readString();
         title = parcel.readString();
@@ -67,6 +62,10 @@ public class RSSItem implements Parcelable {
         dc_creator = parcel.readString();
         dc_date = parcel.readString();
         slash_department = parcel.readString();
+    }
+	
+    public RSSItem (Context c) {
+        context = c;
     }
 
     public RSSItem(String title, String link, String description, String pubDate, String guid, String dc_creator, String dc_date, String slash_department) {
@@ -147,7 +146,7 @@ public class RSSItem implements Parcelable {
     public String getSlash_department() {
         if (!slash_department.trim().equals("")) {
             // do not change slash_department itself
-            return context.getString(R.string.from) + slash_department + context.getString(R.string.department);
+            return context.getString(R.string.from) + slash_department + context.getString(R.string.department) + " ";
         }
 
         return slash_department;

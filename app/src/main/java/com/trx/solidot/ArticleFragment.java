@@ -1,15 +1,21 @@
 package com.trx.solidot;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 
 
 /**
@@ -23,12 +29,13 @@ import android.webkit.WebViewClient;
 public class ArticleFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM2 = "param2";
+    public static final String ARG_TITLE = "TITLE_KEY";
     public static final String ARG_LINK = "LINK_KEY";
+
 
     // TODO: Rename and change types of parameters
     private String mStrLink;
-    private String mParam2;
+    private String mStrTitle;
     private WebView wv;
 
     private OnArticleFragmentInteractionListener mListener;
@@ -50,7 +57,7 @@ public class ArticleFragment extends Fragment {
         ArticleFragment fragment = new ArticleFragment();
         Bundle args = new Bundle();
         args.putString(ARG_LINK, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_TITLE, param2);
         fragment.setArguments(args);
         return fragment;
     }
@@ -60,8 +67,10 @@ public class ArticleFragment extends Fragment {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
             mStrLink = getArguments().getString(ARG_LINK);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            mStrTitle = getArguments().getString(ARG_TITLE);
         }
+
+        setHasOptionsMenu (true);
     }
 
     @Override
@@ -70,6 +79,7 @@ public class ArticleFragment extends Fragment {
         // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_article, container, false);
 
+        final ProgressBar pbar = (ProgressBar) rootView.findViewById(R.id.pbar);
         wv = (WebView) rootView.findViewById(R.id.webView);
         WebSettings settings = wv.getSettings();
         settings.setJavaScriptEnabled(true);
@@ -81,6 +91,21 @@ public class ArticleFragment extends Fragment {
                 return false;
             }
         });
+        wv.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public void onProgressChanged(WebView view, int newProgress) {
+                super.onProgressChanged(view, newProgress);
+                if(newProgress < 100 && pbar.getVisibility() == ProgressBar.GONE){
+                    pbar.setVisibility(ProgressBar.VISIBLE);
+                }
+
+                pbar.setProgress(newProgress);
+                if(newProgress == 100) {
+                    pbar.setVisibility(ProgressBar.GONE);
+                }
+            }
+        });
+
         wv.loadUrl(mStrLink);
         return rootView;
     }
@@ -127,5 +152,57 @@ public class ArticleFragment extends Fragment {
     public interface OnArticleFragmentInteractionListener {
         // TODO: Update argument type and name
         void onArticleFragmentInteraction(Uri uri);
+    }
+
+    /**
+     * @param menu     The options menu in which you place your items.
+     * @param inflater
+     * @see #setHasOptionsMenu
+     * @see #onPrepareOptionsMenu
+     * @see #onOptionsItemSelected
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.articlemenu, menu);
+
+    }
+
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal
+     * processing happen (calling the item's Runnable or sending a message to
+     * its Handler as appropriate).  You can use this method for any items
+     * for which you would like to do processing without those other
+     * facilities.
+     * <p/>
+     * <p>Derived classes should call through to the base class for it to
+     * perform the default menu handling.
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
+     * @see #onCreateOptionsMenu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_refresh) {
+            String urlString = wv.getUrl();
+            wv.loadUrl(urlString);
+        } else if (id == R.id.action_share) {
+            String shareText = mStrTitle + " " + mStrLink;
+
+            Intent shareIntent = new Intent();
+            shareIntent.setAction(Intent.ACTION_SEND);
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareText);
+            shareIntent.setType("text/plain");
+            startActivity(shareIntent);
+
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

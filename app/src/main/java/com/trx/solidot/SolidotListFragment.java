@@ -1,13 +1,18 @@
 package com.trx.solidot;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -60,8 +65,22 @@ public class SolidotListFragment extends Fragment {
         Log.i ("--->", "onCreate");
         context = getActivity();
 
+        startFetchRSSTask ();
+
+        setHasOptionsMenu (true);
+    }
+
+    private void startFetchRSSTask() {
         FetchParseFeedTask fetchTask = new FetchParseFeedTask(this);
-        fetchTask.execute(getString(R.string.rssurl));
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean bAlterFeed = sharedPreferences.getBoolean(getString(R.string.pref_feed_select_key), false);
+
+        if (bAlterFeed) {
+            fetchTask.execute(getString(R.string.rss2url));
+        } else {
+            fetchTask.execute(getString(R.string.rssurl));
+        }
     }
 
     @Override
@@ -70,6 +89,11 @@ public class SolidotListFragment extends Fragment {
         Log.i ("--->", "onCreateView");
 
         View view = inflater.inflate(R.layout.fragment_solidotlist, container, false);
+
+        if(savedInstanceState != null) {
+            itemsList = savedInstanceState.getParcelableArrayList(SAVED_RSS_LIST_KEY);
+            updateDataList(itemsList);
+        }
 
         // Set the adapter
         if (view instanceof RecyclerView) {
@@ -84,6 +108,47 @@ public class SolidotListFragment extends Fragment {
         return view;
     }
 
+    /**
+     * @param menu     The options menu in which you place your items.
+     * @param inflater
+     * @see #setHasOptionsMenu
+     * @see #onPrepareOptionsMenu
+     * @see #onOptionsItemSelected
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        getActivity().getMenuInflater().inflate(R.menu.listmenu, menu);
+
+    }
+
+    /**
+     * This hook is called whenever an item in your options menu is selected.
+     * The default implementation simply returns false to have the normal
+     * processing happen (calling the item's Runnable or sending a message to
+     * its Handler as appropriate).  You can use this method for any items
+     * for which you would like to do processing without those other
+     * facilities.
+     * <p/>
+     * <p>Derived classes should call through to the base class for it to
+     * perform the default menu handling.
+     *
+     * @param item The menu item that was selected.
+     * @return boolean Return false to allow normal menu processing to
+     * proceed, true to consume it here.
+     * @see #onCreateOptionsMenu
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_refresh) {
+            startFetchRSSTask ();
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     @Override
     public void onResume() {
         if (itemsList!=null) {
@@ -96,7 +161,7 @@ public class SolidotListFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArray(SAVED_RSS_LIST_KEY, itemsList);
+        outState.putParcelableArrayList(SAVED_RSS_LIST_KEY, itemsList);
         super.onSaveInstanceState(outState);
     }
 
