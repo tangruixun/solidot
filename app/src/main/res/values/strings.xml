@@ -55,11 +55,15 @@
     <string name="pref_title_ringtone">提示音</string>
     <string name="pref_ringtone_silent">静音</string>
     <string name="pref_title_vibrate">振动</string>
-    <string name="share_via">通过分享...</string>
+    <string name="share_via">通过分享…</string>
     <string name="share_thisapptext">试试 Solidot for Android</string>
     <string name="share_thisappsubject">Solidot</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="pref_feed_select_key">pref_feed_select_key</string>
     <string name="submiturl">http://www.solidot.org/submit</string>
     <string name="submit">提交</string>
-</resources>
+    <string name="keywords_key">keyword_key</string>
+    <string name="keywords_hint">regex</string>
+    <string name="pref_default_keywords">.*</string>
+    <string name="pref_keywords_display_name">关键字</string>
+</>

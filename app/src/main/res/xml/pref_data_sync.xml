@@ -12,6 +12,18 @@
         android:positiveButtonText="@null"
         android:title="@string/pref_title_sync_frequency" />
 
+    <EditTextPreference
+        android:capitalize="words"
+        android:defaultValue="@string/pref_default_keywords"
+        android:inputType="textCapWords"
+        android:key="@string/keywords_key"
+        android:hint="@string/keywords_hint"
+        android:maxLines="1"
+        android:selectAllOnFocus="true"
+        android:singleLine="true"
+        android:title="@string/pref_keywords_display_name" />
+
+
     <!-- This preference simply launches an intent when selected. Use this UI sparingly, per
          design guidelines. >
     <Preference android:title="@string/pref_title_system_sync_settings">
