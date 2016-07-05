@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/Solidot.iml" filepath="$PROJECT_DIR$/Solidot.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/solidot.iml" filepath="$PROJECT_DIR$/solidot.iml" />
     </modules>
   </component>
 </project>

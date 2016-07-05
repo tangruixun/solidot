@@ -1,7 +1,6 @@
 package com.trx.solidot;
 
 import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -145,6 +144,8 @@ public class MainActivity extends AppCompatActivity
         // 最后别忘了，在AndroidManifest.xml中对这Service与Boradcast进行注册！
 
     }
+
+
 
     @Override
     protected void onDestroy() {
