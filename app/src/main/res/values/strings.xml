@@ -67,4 +67,8 @@
     <string name="pref_default_keywords">.*</string>
     <string name="pref_keywords_display_name">关键字</string>
     <string name="solidot">Solidot</string>
-</>
+    <string name="notifications_new_message_key">notifications_new_message_key</string>
+    <string name="notifications_new_message_ringtone_key">notifications_new_message_ringtone_key</string>
+    <string name="notifications_new_message_vibrate_key">notifications_new_message_vibrate_key</string>
+    <string name="sync_frequency_key">sync_frequency_key</string>
+</resources>

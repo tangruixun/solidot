@@ -32,6 +32,7 @@ public class SolidotListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnTitleSelectedListener mListener;
+    private SendLastRSSList sendBackList;
     private Context context;
     private RecyclerView recyclerView;
     private ArrayList <RSSItem> itemsList;
@@ -187,7 +188,7 @@ public class SolidotListFragment extends Fragment {
     public void updateDataList(ArrayList<RSSItem> rssItems) {
         itemsList = rssItems;
         recyclerView.setAdapter(new SolidotItemRecyclerViewAdapter(rssItems, mListener));
-
+        sendBackList.sendBackLastList(rssItems);
     }
 
     /**
@@ -203,5 +204,9 @@ public class SolidotListFragment extends Fragment {
     public interface OnTitleSelectedListener {
         // TODO: Update argument type and name
         void onArticleSelected (RSSItem item);
+    }
+
+    public interface SendLastRSSList {
+        void sendBackLastList (ArrayList<RSSItem> itemsList);
     }
 }

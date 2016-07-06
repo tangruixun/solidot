@@ -23,7 +23,14 @@
         <activity
             android:name=".SettingsActivity"
             android:label="@string/title_activity_settings" />
-        <activity android:name=".AboutActivity"></activity>
+        <activity android:name=".AboutActivity" />
+
+        <service
+            android:name=".CheckIntentService"
+            android:exported="false" />
+
+        <receiver android:name=".AlarmReceiver"
+            android:exported="false" />
     </application>
 
 </manifest>
