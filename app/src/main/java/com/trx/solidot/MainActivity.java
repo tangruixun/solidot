@@ -96,17 +96,7 @@ public class MainActivity extends AppCompatActivity
 
         displayView(R.id.nav_home);
 
-        /////////////////////////////////////////////////////////////////////////////////////
 
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        int freq = sharedPreferences.getInt(getString(R.string.sync_frequency_key), 360);
-
-        Intent startServiceIntent = new Intent(this, CheckIntentService.class);
-        Bundle serviceBundle = new Bundle ();
-        serviceBundle.putInt(CheckIntentService.INTERVAL_TIMER_KEY, freq);
-        serviceBundle.putParcelableArrayList(CheckIntentService.LIST_KEY, itemList);
-        startServiceIntent.putExtras(serviceBundle);
-        startService(startServiceIntent);
     }
 
     @Override
@@ -262,5 +252,18 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void sendBackLastList(ArrayList<RSSItem> itemsList) {
         this.itemList = itemsList;
+        startFetchService (itemsList);
+    }
+
+    private void startFetchService(ArrayList<RSSItem> itemsList) {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String freq = sharedPreferences.getString(getString(R.string.sync_frequency_key), "360");
+
+        Intent startServiceIntent = new Intent(this, CheckIntentService.class);
+        Bundle serviceBundle = new Bundle ();
+        serviceBundle.putInt(CheckIntentService.INTERVAL_TIMER_KEY, Integer.valueOf(freq));
+        serviceBundle.putParcelableArrayList(CheckIntentService.LIST_KEY, itemList);
+        startServiceIntent.putExtras(serviceBundle);
+        startService(startServiceIntent);
     }
 }

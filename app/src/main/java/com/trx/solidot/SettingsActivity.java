@@ -10,6 +10,7 @@ import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceActivity;
@@ -19,8 +20,11 @@ import android.preference.RingtonePreference;
 import android.support.v7.app.ActionBar;
 import android.text.TextUtils;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import java.util.List;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
@@ -220,7 +224,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.notifications_new_message_ringtone_key)));
         }
 
         @Override
@@ -250,15 +254,32 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // to their values. When their values change, their summaries are
             // updated to reflect the new value, per the Android Design
             // guidelines.
-            bindPreferenceSummaryToValue(findPreference("sync_frequency"));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.sync_frequency_key)));
+
+            EditTextPreference epf = (EditTextPreference) findPreference(getString(R.string.keywords_key));
+            epf.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object o) {
+                    return false;
+                }
+            });
+
         }
 
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
-            if (id == android.R.id.home) {
-                startActivity(new Intent(getActivity(), SettingsActivity.class));
-                return true;
+            EditTextPreference epf = (EditTextPreference) findPreference(getString(R.string.keywords_key));
+            String regex = epf.getText();
+            try {
+                Pattern p = Pattern.compile(regex);
+                if (id == android.R.id.home) {
+                    startActivity(new Intent(getActivity(), SettingsActivity.class));
+                    return true;
+                }
+            } catch (PatternSyntaxException e) {
+                epf.setText(".*");
+                Toast.makeText(getActivity(), R.string.illegalregex, Toast.LENGTH_LONG).show();
             }
             return super.onOptionsItemSelected(item);
         }

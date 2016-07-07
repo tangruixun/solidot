@@ -71,4 +71,5 @@
     <string name="notifications_new_message_ringtone_key">notifications_new_message_ringtone_key</string>
     <string name="notifications_new_message_vibrate_key">notifications_new_message_vibrate_key</string>
     <string name="sync_frequency_key">sync_frequency_key</string>
+    <string name="illegalregex">非法的正则</string>
 </resources>

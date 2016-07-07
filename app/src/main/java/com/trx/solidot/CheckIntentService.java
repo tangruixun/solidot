@@ -163,30 +163,33 @@ public class CheckIntentService extends IntentService {
 
     private boolean compareList(ArrayList<RSSItem> latestList, ArrayList<RSSItem> list) {
         String regex = sharedPreferences.getString(getString(R.string.keywords_key), ".*");
-        if (!latestList.isEmpty()) {
-            if (!latestList.get(0).getLink().equals(list.get(0).getLink())) {
-                // has change
-                if (regex.equals(".*")) {
-                    showTray ();
-                    return true;
-                } else {
-                    for (RSSItem item :
-                            latestList) {
-                        Pattern p = Pattern.compile(regex);
-                        Matcher m = p.matcher(item.getDescription());
-                        if (m.matches()) {
-                            showTray ();
-                            return true;
+        if (latestList != null && list != null) {
+            if (!latestList.isEmpty() && !list.isEmpty()) {
+                if (!latestList.get(0).getLink().equals(list.get(0).getLink())) {
+                    // has change
+                    if (regex.equals(".*")) {
+                        showTray ();
+                        return true;
+                    } else {
+                        for (RSSItem item :
+                                latestList) {
+                            Pattern p = Pattern.compile(regex);
+                            Matcher m = p.matcher(item.getDescription());
+                            if (m.matches()) {
+                                showTray ();
+                                return true;
+                            }
                         }
                     }
+                } else {
+                    return false;
                 }
+                return false;
             } else {
                 return false;
             }
-            return false;
-        } else {
-            return false;
         }
+        return false;
     }
 
     private void showTray() {

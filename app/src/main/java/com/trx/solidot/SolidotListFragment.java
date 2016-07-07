@@ -42,6 +42,7 @@ public class SolidotListFragment extends Fragment {
      * fragment (e.g. upon screen orientation changes).
      */
     public SolidotListFragment() {
+
     }
 
     // TODO: Customize parameter initialization
@@ -65,6 +66,9 @@ public class SolidotListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i ("--->", "onCreate");
         context = getActivity();
+        if (context instanceof SendLastRSSList) {
+            sendBackList = (SendLastRSSList) context;
+        }
 
         startFetchRSSTask ();
 
@@ -172,6 +176,8 @@ public class SolidotListFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnTitleSelectedListener) {
             mListener = (OnTitleSelectedListener) context;
+        } else if (context instanceof SendLastRSSList) {
+            sendBackList = (SendLastRSSList) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
