@@ -255,15 +255,6 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // updated to reflect the new value, per the Android Design
             // guidelines.
             bindPreferenceSummaryToValue(findPreference(getString(R.string.sync_frequency_key)));
-
-            EditTextPreference epf = (EditTextPreference) findPreference(getString(R.string.keywords_key));
-            epf.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object o) {
-                    return false;
-                }
-            });
-
         }
 
         @Override

@@ -69,23 +69,7 @@ public class SolidotListFragment extends Fragment {
         if (context instanceof SendLastRSSList) {
             sendBackList = (SendLastRSSList) context;
         }
-
-        startFetchRSSTask ();
-
         setHasOptionsMenu (true);
-    }
-
-    private void startFetchRSSTask() {
-        FetchParseFeedTask fetchTask = new FetchParseFeedTask(this);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        boolean bAlterFeed = sharedPreferences.getBoolean(getString(R.string.pref_feed_select_key), false);
-
-        if (bAlterFeed) {
-            fetchTask.execute(getString(R.string.rss2url));
-        } else {
-            fetchTask.execute(getString(R.string.rssurl));
-        }
     }
 
     @Override
@@ -95,9 +79,19 @@ public class SolidotListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_solidotlist, container, false);
 
-        if(savedInstanceState != null) {
-            itemsList = savedInstanceState.getParcelableArrayList(SAVED_RSS_LIST_KEY);
-            updateDataList(itemsList);
+        if (itemsList==null) {
+            if(savedInstanceState != null) {
+                itemsList = savedInstanceState.getParcelableArrayList(SAVED_RSS_LIST_KEY);
+                updateDataList(itemsList);
+            } else {
+                startFetchRSSTask ();
+            }
+        } else {
+            if (!itemsList.isEmpty()) {
+                updateDataList (itemsList);
+            } else {
+                startFetchRSSTask();
+            }
         }
 
         // Set the adapter
@@ -156,12 +150,12 @@ public class SolidotListFragment extends Fragment {
 
     @Override
     public void onResume() {
+        super.onResume();
         if (itemsList!=null) {
             if (!itemsList.isEmpty()) {
                 updateDataList(itemsList);
             }
         }
-        super.onResume();
     }
 
     @Override
@@ -191,9 +185,24 @@ public class SolidotListFragment extends Fragment {
         mListener = null;
     }
 
+    private void startFetchRSSTask() {
+        FetchParseFeedTask fetchTask = new FetchParseFeedTask(this);
+
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        boolean bAlterFeed = sharedPreferences.getBoolean(getString(R.string.pref_feed_select_key), false);
+
+        if (bAlterFeed) {
+            fetchTask.execute(getString(R.string.rss2url));
+        } else {
+            fetchTask.execute(getString(R.string.rssurl));
+        }
+    }
+
     public void updateDataList(ArrayList<RSSItem> rssItems) {
         itemsList = rssItems;
-        recyclerView.setAdapter(new SolidotItemRecyclerViewAdapter(rssItems, mListener));
+        SolidotItemRecyclerViewAdapter adptr = new SolidotItemRecyclerViewAdapter(rssItems, mListener);
+        recyclerView.setAdapter(adptr);
+        adptr.notifyDataSetChanged();
         sendBackList.sendBackLastList(rssItems);
     }
 
