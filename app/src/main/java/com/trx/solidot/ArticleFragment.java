@@ -2,6 +2,7 @@ package com.trx.solidot;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -96,7 +97,12 @@ public class ArticleFragment extends Fragment {
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
                 if(newProgress < 100 && pbar.getVisibility() == ProgressBar.GONE){
+                    int color = newProgress * 16777215 / 100;
+                    color = color | 0xFF000000;
+                    pbar.getIndeterminateDrawable().setColorFilter(color, android.graphics.PorterDuff.Mode.OVERLAY);
+                    pbar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.OVERLAY);
                     pbar.setVisibility(ProgressBar.VISIBLE);
+
                 }
 
                 pbar.setProgress(newProgress);

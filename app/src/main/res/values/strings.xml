@@ -72,4 +72,5 @@
     <string name="notifications_new_message_vibrate_key">notifications_new_message_vibrate_key</string>
     <string name="sync_frequency_key">sync_frequency_key</string>
     <string name="illegalregex">非法的正则</string>
+    <string name="slogan">奇客的资讯 重要的东西</string>
 </resources>

@@ -17,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -27,17 +28,20 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         SolidotListFragment.OnTitleSelectedListener,
         SolidotListFragment.SendLastRSSList,
+        SolidotListFragment.ProgressBarUpdate,
         ArticleFragment.OnArticleFragmentInteractionListener {
 
     private boolean viewIsAtHome;
     private AdView adView;
     private ArrayList<RSSItem> itemList;
+    private ProgressBar pbr;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        pbr = (ProgressBar) findViewById(R.id.pbHeaderProgress);
         setSupportActionBar(toolbar);
 
         itemList = new ArrayList<>();
@@ -265,5 +269,14 @@ public class MainActivity extends AppCompatActivity
         serviceBundle.putParcelableArrayList(CheckIntentService.LIST_KEY, itemList);
         startServiceIntent.putExtras(serviceBundle);
         startService(startServiceIntent);
+    }
+
+    @Override
+    public void changeProgressBar(int isShow) {
+        if (isShow!=0) {
+            pbr.setVisibility(View.GONE);
+        } else {
+            pbr.setVisibility(View.VISIBLE);
+        }
     }
 }

@@ -33,6 +33,7 @@ public class SolidotListFragment extends Fragment {
     private int mColumnCount = 1;
     private OnTitleSelectedListener mListener;
     private SendLastRSSList sendBackList;
+    private ProgressBarUpdate pbHandler;
     private Context context;
     private RecyclerView recyclerView;
     private ArrayList <RSSItem> itemsList;
@@ -68,6 +69,9 @@ public class SolidotListFragment extends Fragment {
         context = getActivity();
         if (context instanceof SendLastRSSList) {
             sendBackList = (SendLastRSSList) context;
+        }
+        if (context instanceof ProgressBarUpdate) {
+            pbHandler = (ProgressBarUpdate) context;
         }
         setHasOptionsMenu (true);
     }
@@ -172,6 +176,8 @@ public class SolidotListFragment extends Fragment {
             mListener = (OnTitleSelectedListener) context;
         } else if (context instanceof SendLastRSSList) {
             sendBackList = (SendLastRSSList) context;
+        } else if (context instanceof ProgressBarUpdate) {
+            pbHandler = (ProgressBarUpdate) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
@@ -206,6 +212,10 @@ public class SolidotListFragment extends Fragment {
         sendBackList.sendBackLastList(rssItems);
     }
 
+    public void changeProgress(int v) {
+        pbHandler.changeProgressBar (v);
+    }
+
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -223,5 +233,9 @@ public class SolidotListFragment extends Fragment {
 
     public interface SendLastRSSList {
         void sendBackLastList (ArrayList<RSSItem> itemsList);
+    }
+
+    public interface ProgressBarUpdate {
+        void changeProgressBar (int isShow);
     }
 }

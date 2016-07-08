@@ -54,6 +54,7 @@ public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSS
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
+            publishProgress(1);
             if (is!=null) {
                 try {
                     is.close();
@@ -63,7 +64,6 @@ public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSS
                     is = null;
                 }
             }
-            publishProgress(1);
         }
         return articleList;
     }
@@ -80,17 +80,6 @@ public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSS
         super.onProgressUpdate(values);
         int v = values [0];
         SolidotListFragment frag = (SolidotListFragment) weakRef.get();
-        switch (v) {
-            case 0:
-                frag.showProgress ();
-                break;
-            case 1:
-                frag.hideProgress ();
-                break;
-            default:
-                frag.hideProgress ();
-                break;
-        }
-
+        frag.changeProgress (v);
     }
 }
