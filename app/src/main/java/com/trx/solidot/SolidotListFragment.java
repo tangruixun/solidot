@@ -32,8 +32,6 @@ public class SolidotListFragment extends Fragment {
     // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnTitleSelectedListener mListener;
-    private SendLastRSSList sendBackList;
-    private ProgressBarUpdate pbHandler;
     private Context context;
     private RecyclerView recyclerView;
     private ArrayList <RSSItem> itemsList;
@@ -48,8 +46,7 @@ public class SolidotListFragment extends Fragment {
 
     // TODO: Customize parameter initialization
     public static SolidotListFragment newInstance() {
-        SolidotListFragment fragment = new SolidotListFragment();
-        return fragment;
+        return new SolidotListFragment();
     }
 
     // TODO: Customize parameter initialization
@@ -67,12 +64,7 @@ public class SolidotListFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Log.i ("--->", "onCreate");
         context = getActivity();
-        if (context instanceof SendLastRSSList) {
-            sendBackList = (SendLastRSSList) context;
-        }
-        if (context instanceof ProgressBarUpdate) {
-            pbHandler = (ProgressBarUpdate) context;
-        }
+
         setHasOptionsMenu (true);
     }
 
@@ -108,6 +100,9 @@ public class SolidotListFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
         }
+
+        mListener.setDrawerIcon();
+
         return view;
     }
 
@@ -174,14 +169,12 @@ public class SolidotListFragment extends Fragment {
         super.onAttach(context);
         if (context instanceof OnTitleSelectedListener) {
             mListener = (OnTitleSelectedListener) context;
-        } else if (context instanceof SendLastRSSList) {
-            sendBackList = (SendLastRSSList) context;
-        } else if (context instanceof ProgressBarUpdate) {
-            pbHandler = (ProgressBarUpdate) context;
         } else {
             throw new RuntimeException(context.toString()
                     + " must implement OnListFragmentInteractionListener");
         }
+
+        mListener.setDrawerIcon();
     }
 
     @Override
@@ -209,11 +202,11 @@ public class SolidotListFragment extends Fragment {
         SolidotItemRecyclerViewAdapter adptr = new SolidotItemRecyclerViewAdapter(rssItems, mListener);
         recyclerView.setAdapter(adptr);
         adptr.notifyDataSetChanged();
-        sendBackList.sendBackLastList(rssItems);
+        mListener.sendBackLastList(rssItems);
     }
 
     public void changeProgress(int v) {
-        pbHandler.changeProgressBar (v);
+        mListener.changeProgressBar (v);
     }
 
     /**
@@ -229,13 +222,10 @@ public class SolidotListFragment extends Fragment {
     public interface OnTitleSelectedListener {
         // TODO: Update argument type and name
         void onArticleSelected (RSSItem item);
-    }
-
-    public interface SendLastRSSList {
         void sendBackLastList (ArrayList<RSSItem> itemsList);
+        void changeProgressBar (int isShow);
+        void setDrawerIcon ();
+
     }
 
-    public interface ProgressBarUpdate {
-        void changeProgressBar (int isShow);
-    }
 }

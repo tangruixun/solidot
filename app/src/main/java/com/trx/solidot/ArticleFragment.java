@@ -6,6 +6,7 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -70,7 +71,6 @@ public class ArticleFragment extends Fragment {
             mStrLink = getArguments().getString(ARG_LINK);
             mStrTitle = getArguments().getString(ARG_TITLE);
         }
-
         setHasOptionsMenu (true);
     }
 
@@ -113,6 +113,10 @@ public class ArticleFragment extends Fragment {
         });
 
         wv.loadUrl(mStrLink);
+
+        mListener.setDrawerIcon(false);
+        mListener.changeDrawerTitle(mStrTitle);
+
         return rootView;
     }
 
@@ -136,6 +140,7 @@ public class ArticleFragment extends Fragment {
 
     @Override
     public void onDetach() {
+        mListener.setDrawerIcon(true);
         super.onDetach();
         mListener = null;
     }
@@ -158,6 +163,8 @@ public class ArticleFragment extends Fragment {
     public interface OnArticleFragmentInteractionListener {
         // TODO: Update argument type and name
         void onArticleFragmentInteraction(Uri uri);
+        void setDrawerIcon (boolean b);
+        void changeDrawerTitle (String title);
     }
 
     /**
@@ -198,8 +205,15 @@ public class ArticleFragment extends Fragment {
         if (id == R.id.action_refresh) {
             String urlString = wv.getUrl();
             wv.loadUrl(urlString);
+        } else if (id == android.R.id.home) {
+            final FragmentTransaction ft = getFragmentManager().beginTransaction();
+            SolidotListFragment fragment = SolidotListFragment.newInstance();
+            ft.replace(R.id.content_frame, fragment);
+            ft.commit();
+            ft.addToBackStack(null);
+            return true;
         } else if (id == R.id.action_share) {
-            String shareText = mStrTitle + " " + mStrLink;
+            String shareText = mStrTitle + " " + mStrLink + " " + getString(R.string.share_via_surfix);
 
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);

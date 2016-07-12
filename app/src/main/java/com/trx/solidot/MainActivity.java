@@ -27,14 +27,13 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         SolidotListFragment.OnTitleSelectedListener,
-        SolidotListFragment.SendLastRSSList,
-        SolidotListFragment.ProgressBarUpdate,
         ArticleFragment.OnArticleFragmentInteractionListener {
 
     private boolean viewIsAtHome;
     private AdView adView;
     private ArrayList<RSSItem> itemList;
     private ProgressBar pbr;
+    private ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,9 +89,10 @@ public class MainActivity extends AppCompatActivity
         });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
+
         toggle.syncState();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
@@ -117,6 +117,7 @@ public class MainActivity extends AppCompatActivity
         if (adView != null) {
             adView.resume();
         }
+
     }
 
     @Override
@@ -254,6 +255,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void setDrawerIcon(boolean b) {
+        if (getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
+    }
+
+    @Override
+    public void changeDrawerTitle(String title) {
+        if (getSupportActionBar()!=null) {
+            getSupportActionBar().setTitle(title);
+        }
+    }
+
+    @Override
     public void sendBackLastList(ArrayList<RSSItem> itemsList) {
         this.itemList = itemsList;
         startFetchService (itemsList);
@@ -266,7 +282,7 @@ public class MainActivity extends AppCompatActivity
         Intent startServiceIntent = new Intent(this, CheckIntentService.class);
         Bundle serviceBundle = new Bundle ();
         serviceBundle.putInt(CheckIntentService.INTERVAL_TIMER_KEY, Integer.valueOf(freq));
-        serviceBundle.putParcelableArrayList(CheckIntentService.LIST_KEY, itemList);
+        serviceBundle.putParcelableArrayList(CheckIntentService.LIST_KEY, itemsList);
         startServiceIntent.putExtras(serviceBundle);
         startService(startServiceIntent);
     }
@@ -277,6 +293,14 @@ public class MainActivity extends AppCompatActivity
             pbr.setVisibility(View.GONE);
         } else {
             pbr.setVisibility(View.VISIBLE);
+        }
+    }
+
+    @Override
+    public void setDrawerIcon() {
+        if (getSupportActionBar()!=null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            getSupportActionBar().setHomeButtonEnabled(true);
         }
     }
 }

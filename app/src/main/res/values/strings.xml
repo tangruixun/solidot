@@ -1,35 +1,35 @@
 <resources>
     <string name="app_name">Solidot</string>
 
-    <string name="navigation_drawer_open">打开侧边栏</string>
-    <string name="navigation_drawer_close">关闭侧边栏</string>
+    <string name="navigation_drawer_open">Open Sidebar</string>
+    <string name="navigation_drawer_close">Close Sidebar</string>
 
-    <string name="action_settings">设置</string>
-    <string name="menu_nav_home">全部</string>
+    <string name="action_settings">Settings</string>
+    <string name="menu_nav_home">Latest</string>
     <string name="rssurl">http://www.solidot.org/index.rss</string>
     <string name="rss2url">http://feeds2.feedburner.com/solidot</string>
-    <string name="publishedat"> 发表于 </string>
-    <string name="from">来自</string>
-    <string name="department">部门 </string>
-    <string name="share_this_app">应用分享</string>
-    <string name="this_app">应用</string>
-    <string name="about">关于</string>
-    <string name="action_share">分享</string>
+    <string name="publishedat"> Published at </string>
+    <string name="from">from </string>
+    <string name="department">department </string>
+    <string name="share_this_app">App Sharing</string>
+    <string name="this_app">App</string>
+    <string name="about">About</string>
+    <string name="action_share">Share</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="action_refresh">刷新</string>
-    <string name="title_activity_settings">设定</string>
+    <string name="action_refresh">Reload</string>
+    <string name="title_activity_settings">Settings</string>
 
     <!-- Strings related to Settings -->
     <!-- Example General settings -->
-    <string name="pref_header_general">来源</string>
+    <string name="pref_header_general">Source</string>
 
-    <string name="pref_title_alternative_feed">使用 feedburner</string>
-    <string name="pref_description_alternative_feed">中国以外可选择 feedburner</string>
+    <string name="pref_title_alternative_feed">Use feedburner</string>
+    <string name="pref_description_alternative_feed">Use feedburner outside of China</string>
 
     <!-- Example settings for Data & Sync -->
-    <string name="pref_header_data_sync">同步</string>
+    <string name="pref_header_data_sync">Sync</string>
 
-    <string name="pref_title_sync_frequency">同步频率</string>
+    <string name="pref_title_sync_frequency">Sync frequency</string>
     <string-array name="pref_sync_frequency_titles">
         <item>1 hour</item>
         <item>3 hours</item>
@@ -48,29 +48,30 @@
     </string-array>
 
     <!-- Example settings for Notifications -->
-    <string name="pref_header_notifications">提示音</string>
+    <string name="pref_header_notifications">Notification</string>
 
-    <string name="pref_title_new_message_notifications">新文章提示音</string>
+    <string name="pref_title_new_message_notifications">Notification sound for new post</string>
 
-    <string name="pref_title_ringtone">提示音</string>
-    <string name="pref_ringtone_silent">静音</string>
-    <string name="pref_title_vibrate">振动</string>
-    <string name="share_via">通过分享…</string>
-    <string name="share_thisapptext">试试 Solidot for Android</string>
+    <string name="pref_title_ringtone">Sound</string>
+    <string name="pref_ringtone_silent">Mute</string>
+    <string name="pref_title_vibrate">Vibrate</string>
+    <string name="share_via">Sharing…</string>
+    <string name="share_thisapptext">Try Solidot for Android https://goo.gl/mGewiB </string>
     <string name="share_thisappsubject">Solidot</string>
     <string name="title_activity_about">AboutActivity</string>
     <string name="pref_feed_select_key">pref_feed_select_key</string>
     <string name="submiturl">http://www.solidot.org/submit</string>
-    <string name="submit">提交</string>
+    <string name="submit">Submit</string>
     <string name="keywords_key">keyword_key</string>
     <string name="keywords_hint">regex</string>
     <string name="pref_default_keywords">.*</string>
-    <string name="pref_keywords_display_name">关键字</string>
+    <string name="pref_keywords_display_name">Keywords</string>
     <string name="solidot">Solidot</string>
     <string name="notifications_new_message_key">notifications_new_message_key</string>
     <string name="notifications_new_message_ringtone_key">notifications_new_message_ringtone_key</string>
     <string name="notifications_new_message_vibrate_key">notifications_new_message_vibrate_key</string>
     <string name="sync_frequency_key">sync_frequency_key</string>
-    <string name="illegalregex">非法的正则</string>
-    <string name="slogan">奇客的资讯 重要的东西</string>
+    <string name="illegalregex">Illegal regex</string>
+    <string name="slogan">Info for Geek, Important things </string>
+    <string name="share_via_surfix">( via Solidot for Android https://goo.gl/mGewiB )</string>
 </resources>
