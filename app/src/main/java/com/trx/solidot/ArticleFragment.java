@@ -6,7 +6,6 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -72,6 +71,7 @@ public class ArticleFragment extends Fragment {
             mStrTitle = getArguments().getString(ARG_TITLE);
         }
         setHasOptionsMenu (true);
+
     }
 
     @Override
@@ -96,26 +96,33 @@ public class ArticleFragment extends Fragment {
             @Override
             public void onProgressChanged(WebView view, int newProgress) {
                 super.onProgressChanged(view, newProgress);
-                if(newProgress < 100 && pbar.getVisibility() == ProgressBar.GONE){
+                if(newProgress < 100 && pbar.getVisibility() != ProgressBar.GONE){
                     int color = newProgress * 16777215 / 100;
-                    color = color | 0xFF000000;
+                    color = color | 0xF0101010;
                     pbar.getIndeterminateDrawable().setColorFilter(color, android.graphics.PorterDuff.Mode.OVERLAY);
                     pbar.getProgressDrawable().setColorFilter(color, PorterDuff.Mode.OVERLAY);
                     pbar.setVisibility(ProgressBar.VISIBLE);
-
                 }
 
                 pbar.setProgress(newProgress);
-                if(newProgress == 100) {
+                if(newProgress >= 100) {
                     pbar.setVisibility(ProgressBar.GONE);
                 }
+            }
+
+            @Override
+            public void onReceivedTitle(WebView view, String title) {
+                getActivity().setTitle(title);
+                super.onReceivedTitle(view, title);
             }
         });
 
         wv.loadUrl(mStrLink);
 
-        mListener.setDrawerIcon(false);
+        mListener.setDrawerIcon(true);
         mListener.changeDrawerTitle(mStrTitle);
+
+
 
         return rootView;
     }
@@ -140,7 +147,7 @@ public class ArticleFragment extends Fragment {
 
     @Override
     public void onDetach() {
-        mListener.setDrawerIcon(true);
+        mListener.setDrawerIcon(false);
         super.onDetach();
         mListener = null;
     }
@@ -203,14 +210,7 @@ public class ArticleFragment extends Fragment {
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            String urlString = wv.getUrl();
-            wv.loadUrl(urlString);
-        } else if (id == android.R.id.home) {
-            final FragmentTransaction ft = getFragmentManager().beginTransaction();
-            SolidotListFragment fragment = SolidotListFragment.newInstance();
-            ft.replace(R.id.content_frame, fragment);
-            ft.commit();
-            ft.addToBackStack(null);
+            wv.reload();
             return true;
         } else if (id == R.id.action_share) {
             String shareText = mStrTitle + " " + mStrLink + " " + getString(R.string.share_via_surfix);
@@ -223,6 +223,7 @@ public class ArticleFragment extends Fragment {
 
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        //return super.onOptionsItemSelected(item);
+        return true;
     }
 }

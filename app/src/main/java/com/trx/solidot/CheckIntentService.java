@@ -91,11 +91,11 @@ public class CheckIntentService extends IntentService {
             e.printStackTrace();
         }
 
-        compareList (latestList, list);
+        boolean bDiff = compareList (latestList, list);
 
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        //int millsec = intervalTIme * 60 * 1000;
-        int millsec = intervalTIme * 1000;
+        int millsec = intervalTIme * 60 * 1000;
+        //int millsec = intervalTIme * 1000;
 
         long triggerAtTime = SystemClock.elapsedRealtime() + millsec;
 
@@ -171,8 +171,7 @@ public class CheckIntentService extends IntentService {
                         showTray ();
                         return true;
                     } else {
-                        for (RSSItem item :
-                                latestList) {
+                        for (RSSItem item : latestList) {
                             Pattern p = Pattern.compile(regex);
                             Matcher m = p.matcher(item.getDescription());
                             if (m.matches()) {
@@ -211,8 +210,8 @@ public class CheckIntentService extends IntentService {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.mipmap.solidot)
-                        .setContentTitle("My notification")
-                        .setContentText("Hello World!");
+                        .setContentTitle(getString (R.string.app_name))
+                        .setContentText(getString (R.string.notification));
 
         // Creates an explicit intent for an Activity in your app
         Intent resultIntent = new Intent(this, MainActivity.class);

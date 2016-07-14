@@ -1,4 +1,6 @@
-<resources>
+<resources tools:locale="zh"
+    xmlns:tools="http://schemas.android.com/tools">
+
     <string name="app_name">Solidot</string>
 
     <string name="navigation_drawer_open">打开侧边栏</string>
@@ -74,4 +76,5 @@
     <string name="illegalregex">非法的正则</string>
     <string name="slogan">奇客的资讯 重要的东西 </string>
     <string name="share_via_surfix">( 来自 Solidot for Android https://goo.gl/mGewiB )</string>
+    <string name="notification">提示</string>
 </resources>

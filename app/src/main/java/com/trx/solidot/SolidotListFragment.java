@@ -101,7 +101,7 @@ public class SolidotListFragment extends Fragment {
             }
         }
 
-        mListener.setDrawerIcon();
+        mListener.setDrawerIcon(false);
 
         return view;
     }
@@ -155,6 +155,9 @@ public class SolidotListFragment extends Fragment {
                 updateDataList(itemsList);
             }
         }
+        // set the toolbar title
+        String title = getString(R.string.menu_nav_home);
+        mListener.changeDrawerTitle(title);
     }
 
     @Override
@@ -174,7 +177,7 @@ public class SolidotListFragment extends Fragment {
                     + " must implement OnListFragmentInteractionListener");
         }
 
-        mListener.setDrawerIcon();
+        mListener.setDrawerIcon(false);
     }
 
     @Override
@@ -224,8 +227,8 @@ public class SolidotListFragment extends Fragment {
         void onArticleSelected (RSSItem item);
         void sendBackLastList (ArrayList<RSSItem> itemsList);
         void changeProgressBar (int isShow);
-        void setDrawerIcon ();
-
+        void setDrawerIcon (boolean b);
+        void changeDrawerTitle(String title);
     }
 
 }

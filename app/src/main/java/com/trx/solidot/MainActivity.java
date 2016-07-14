@@ -1,7 +1,9 @@
 package com.trx.solidot;
 
+import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -27,13 +29,15 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         SolidotListFragment.OnTitleSelectedListener,
-        ArticleFragment.OnArticleFragmentInteractionListener {
+        ArticleFragment.OnArticleFragmentInteractionListener,
+        FragmentManager.OnBackStackChangedListener{
 
     private boolean viewIsAtHome;
     private AdView adView;
     private ArrayList<RSSItem> itemList;
     private ProgressBar pbr;
     private ActionBarDrawerToggle toggle;
+    private DrawerLayout drawer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,7 +92,7 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -99,7 +103,7 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         displayView(R.id.nav_home);
-
+        getFragmentManager().addOnBackStackChangedListener(this);
 
     }
 
@@ -117,7 +121,6 @@ public class MainActivity extends AppCompatActivity
         if (adView != null) {
             adView.resume();
         }
-
     }
 
     @Override
@@ -196,13 +199,12 @@ public class MainActivity extends AppCompatActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        //if (id == R.id.action_settings) {
-        //    return true;
-        //}
-
-        return super.onOptionsItemSelected(item);
+        if (id == android.R.id.home) {
+            onBackPressed();
+            return true;
+        }
+        //return super.onOptionsItemSelected(item);
+        return true;
     }
 
     @Override
@@ -241,8 +243,9 @@ public class MainActivity extends AppCompatActivity
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack so the user can navigate back
+            SolidotListFragment sf = SolidotListFragment.newInstance();
             transaction.replace(R.id.content_frame, newFragment);
-            transaction.addToBackStack(null);
+            transaction.addToBackStack("detail");
 
             // Commit the transaction
             transaction.commit();
@@ -254,13 +257,7 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-    @Override
-    public void setDrawerIcon(boolean b) {
-        if (getSupportActionBar()!=null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setHomeButtonEnabled(true);
-        }
-    }
+
 
     @Override
     public void changeDrawerTitle(String title) {
@@ -297,10 +294,53 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void setDrawerIcon() {
+    public void setDrawerIcon (boolean b) {
         if (getSupportActionBar()!=null) {
+            if (b) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                getSupportActionBar().setHomeButtonEnabled(true);
+                toggle.setDrawerIndicatorEnabled(false);
+
+            } else {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+                toggle = new ActionBarDrawerToggle(this, drawer, R.string.navigation_drawer_open, R.string.navigation_drawer_close) {
+
+                    public void onDrawerClosed(View view) {
+                        supportInvalidateOptionsMenu();
+                        //drawerOpened = false;
+                    }
+
+                    public void onDrawerOpened(View drawerView) {
+                        supportInvalidateOptionsMenu();
+                        //drawerOpened = true;
+                    }
+                };
+                toggle.setDrawerIndicatorEnabled(true);
+                drawer.setDrawerListener(toggle);
+                toggle.syncState();
+            }
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        toggle.syncState();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        toggle.onConfigurationChanged(newConfig);
+    }
+
+    @Override
+    public void onBackStackChanged() {
+        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }else {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            getSupportActionBar().setHomeButtonEnabled(true);
+            toggle.syncState();
         }
     }
 }

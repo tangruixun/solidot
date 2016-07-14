@@ -10,7 +10,7 @@
     <string name="rss2url">http://feeds2.feedburner.com/solidot</string>
     <string name="publishedat"> Published at </string>
     <string name="from">from </string>
-    <string name="department">department </string>
+    <string name="department"> department </string>
     <string name="share_this_app">App Sharing</string>
     <string name="this_app">App</string>
     <string name="about">About</string>
@@ -74,4 +74,5 @@
     <string name="illegalregex">Illegal regex</string>
     <string name="slogan">Info for Geek, Important things </string>
     <string name="share_via_surfix">( via Solidot for Android https://goo.gl/mGewiB )</string>
+    <string name="notification">notification</string>
 </resources>
