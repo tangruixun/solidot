@@ -72,7 +72,7 @@
     <string name="notifications_new_message_vibrate_key">notifications_new_message_vibrate_key</string>
     <string name="sync_frequency_key">sync_frequency_key</string>
     <string name="illegalregex">Illegal regex</string>
-    <string name="slogan">Info for Geek, Important things </string>
+    <string name="slogan">Info for Geeks, Important things </string>
     <string name="share_via_surfix">( via Solidot for Android https://goo.gl/mGewiB )</string>
     <string name="notification">notification</string>
 </resources>

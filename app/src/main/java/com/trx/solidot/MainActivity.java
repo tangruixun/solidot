@@ -257,8 +257,6 @@ public class MainActivity extends AppCompatActivity
 
     }
 
-
-
     @Override
     public void changeDrawerTitle(String title) {
         if (getSupportActionBar()!=null) {
@@ -337,9 +335,13 @@ public class MainActivity extends AppCompatActivity
     @Override
     public void onBackStackChanged() {
         if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            if (getSupportActionBar () != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }else {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            if (getSupportActionBar () != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+            }
             toggle.syncState();
         }
     }

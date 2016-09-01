@@ -91,11 +91,15 @@ public class CheckIntentService extends IntentService {
             e.printStackTrace();
         }
 
+        //RSSItem test = new RSSItem("test", "test", "test", "test", "test", "test", "test", "test");
+        //latestList.add(0, test);
+
         boolean bDiff = compareList (latestList, list);
 
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         int millsec = intervalTIme * 60 * 1000;
         //int millsec = intervalTIme * 1000;
+        //int millsec = 1000;
 
         long triggerAtTime = SystemClock.elapsedRealtime() + millsec;
 
@@ -165,7 +169,7 @@ public class CheckIntentService extends IntentService {
         String regex = sharedPreferences.getString(getString(R.string.keywords_key), ".*");
         if (latestList != null && list != null) {
             if (!latestList.isEmpty() && !list.isEmpty()) {
-                if (!latestList.get(0).getLink().equals(list.get(0).getLink())) {
+                if (!latestList.get(0).getLink().equals(list.get(0).getLink()) || (latestList.size () != list.size ())) {
                     // has change
                     if (regex.equals(".*")) {
                         showTray ();
@@ -209,7 +213,7 @@ public class CheckIntentService extends IntentService {
 
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.mipmap.solidot)
+                        .setSmallIcon(R.mipmap.smallnotifybarsolidot)
                         .setContentTitle(getString (R.string.app_name))
                         .setContentText(getString (R.string.notification));
 

@@ -112,7 +112,9 @@ public class ArticleFragment extends Fragment {
 
             @Override
             public void onReceivedTitle(WebView view, String title) {
-                getActivity().setTitle(title);
+                if (getActivity() != null) {
+                    getActivity().setTitle(title);
+                }
                 super.onReceivedTitle(view, title);
             }
         });
@@ -121,8 +123,6 @@ public class ArticleFragment extends Fragment {
 
         mListener.setDrawerIcon(true);
         mListener.changeDrawerTitle(mStrTitle);
-
-
 
         return rootView;
     }
