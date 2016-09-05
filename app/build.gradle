@@ -8,8 +8,8 @@ android {
         applicationId "com.trx.solidot"
         minSdkVersion 19
         targetSdkVersion 24
-        versionCode 5
-        versionName "1.3"
+        versionCode 6
+        versionName "1.36"
     }
     buildTypes {
         release {

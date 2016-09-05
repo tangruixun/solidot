@@ -223,7 +223,6 @@ public class ArticleFragment extends Fragment {
 
             return true;
         }
-        //return super.onOptionsItemSelected(item);
-        return true;
+        return super.onOptionsItemSelected(item);
     }
 }
