@@ -95,6 +95,9 @@ public class CheckIntentService extends IntentService {
         //latestList.add(0, test);
 
         boolean bDiff = compareList (latestList, list);
+        if (bDiff) {
+            showTray();
+        }
 
         AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
         int millsec = intervalTIme * 60 * 1000;
@@ -172,14 +175,12 @@ public class CheckIntentService extends IntentService {
                 if (!latestList.get(0).getLink().equals(list.get(0).getLink()) || (latestList.size () != list.size ())) {
                     // has change
                     if (regex.equals(".*")) {
-                        showTray ();
                         return true;
                     } else {
                         for (RSSItem item : latestList) {
                             Pattern p = Pattern.compile(regex);
                             Matcher m = p.matcher(item.getDescription());
                             if (m.matches()) {
-                                showTray ();
                                 return true;
                             }
                         }

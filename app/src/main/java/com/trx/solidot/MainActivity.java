@@ -141,11 +141,9 @@ public class MainActivity extends AppCompatActivity
                 title = getString(R.string.menu_nav_home);
                 viewIsAtHome = true;
 
-                if (fragment != null) {
-                    FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                    ft.replace(R.id.content_frame, fragment);
-                    ft.commit();
-                }
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+                ft.replace(R.id.content_frame, fragment);
+                ft.commit();
 
                 // set the toolbar title
                 if (getSupportActionBar() != null) {
