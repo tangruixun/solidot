@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -41,7 +43,7 @@ import javax.xml.parsers.SAXParserFactory;
  * <p>
  * TODO: Customize class - update intent actions and extra parameters.
  */
-public class CheckIntentService extends IntentService {
+public class CheckIntentService extends Service {
     // TODO: Rename actions, choose action names that describe tasks that this
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     public static final String INTERVAL_TIMER_KEY = "INTERVAL_TIMER_KEY";
@@ -52,12 +54,10 @@ public class CheckIntentService extends IntentService {
     private SharedPreferences sharedPreferences;
     private int mId = 0;
 
-    public CheckIntentService() {
-        super("CheckIntentService");
-    }
-
     @Override
-    protected void onHandleIntent(Intent intent) {
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // We want this service to continue running until it is explicitly
+        // stopped, so return sticky.
         //Intent是从Activity发过来的，携带识别参数，根据参数不同执行不同的任务
         Log.i("--->", "onHandleIntent");
 
@@ -166,6 +166,12 @@ public class CheckIntentService extends IntentService {
 //        // 在onStartCommand中开辟一条事务线程,用于处理一些定时逻辑
 //        //Step 4：定义一个Broadcast(广播)，用于启动Service
 //        // 最后别忘了，在AndroidManifest.xml中对这Service与Boradcast进行注册！
+        return START_STICKY;
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     private boolean compareList(ArrayList<RSSItem> latestList, ArrayList<RSSItem> list) {
@@ -290,5 +296,4 @@ public class CheckIntentService extends IntentService {
         Log.i("--->", "onDestroy");
         super.onDestroy();
     }
-
 }
