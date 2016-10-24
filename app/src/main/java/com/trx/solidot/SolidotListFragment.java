@@ -188,7 +188,7 @@ public class SolidotListFragment extends Fragment {
     }
 
     private void startFetchRSSTask() {
-        FetchParseFeedTask fetchTask = new FetchParseFeedTask(this);
+        FetchParseFeedTask fetchTask = new FetchParseFeedTask(this, 0);
 
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
         boolean bAlterFeed = sharedPreferences.getBoolean(getString(R.string.pref_feed_select_key), false);

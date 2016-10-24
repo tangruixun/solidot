@@ -1,6 +1,7 @@
 package com.trx.solidot;
 
 
+import android.app.Service;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
@@ -22,24 +23,40 @@ import javax.xml.parsers.SAXParserFactory;
  */
 public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSSItem>> {
 
-    private WeakReference<Fragment> weakRef;
+    private int flag = 0; // 0: Fragment, 1: Service
+    private WeakReference<Fragment> weakFrgRef;
+    private WeakReference<Service>  weakSrvRef;
     private ArrayList<RSSItem> articleList;
 
 
-    public FetchParseFeedTask(Fragment frag) {
-        weakRef = new WeakReference<>(frag);
+    public FetchParseFeedTask(Fragment frag, int flag) {
+        weakFrgRef = new WeakReference<>(frag);
+        this.flag = flag;
+    }
+
+    public FetchParseFeedTask(Service serv, int flag) {
+        weakSrvRef = new WeakReference<>(serv);
+        this.flag = flag;
     }
 
     @Override
     protected ArrayList<RSSItem> doInBackground(String[] finalUrl) {
 
         articleList = new ArrayList<>();
-        SolidotListFragment frag = (SolidotListFragment) weakRef.get();
-        Context context = frag.getActivity();
+        Context context;
+        if (flag == 0) {
+            SolidotListFragment frag = (SolidotListFragment) weakFrgRef.get();
+            context = frag.getActivity();
+        } else {
+            CheckIntentService srv = (CheckIntentService) weakSrvRef.get();
+            context = srv;
+        }
         InputStream is = null;
 
         try {
-            publishProgress(0);
+            if (flag == 0) {
+                publishProgress(0);
+            }
 
             URL url = new URL(finalUrl[0]); //呼叫網址進來
 
@@ -54,7 +71,9 @@ public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSS
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            publishProgress(1);
+            if (flag == 0) {
+                publishProgress(1);
+            }
             if (is!=null) {
                 try {
                     is.close();
@@ -71,15 +90,24 @@ public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSS
     @Override
     protected void onPostExecute(ArrayList<RSSItem> rssItems) {
         super.onPostExecute(rssItems);
-        SolidotListFragment frag = (SolidotListFragment) weakRef.get();
-        frag.updateDataList (rssItems);
+        if (flag == 0) {
+            SolidotListFragment frag = (SolidotListFragment) weakFrgRef.get();
+            frag.updateDataList(rssItems);
+        } else {
+            CheckIntentService srv = (CheckIntentService) weakSrvRef.get();
+            srv.gotLatestList(rssItems);
+        }
     }
 
     @Override
     protected void onProgressUpdate(Integer... values) {
         super.onProgressUpdate(values);
-        int v = values [0];
-        SolidotListFragment frag = (SolidotListFragment) weakRef.get();
-        frag.changeProgress (v);
+        if (flag == 0) {
+            int v = values[0];
+            SolidotListFragment frag = (SolidotListFragment) weakFrgRef.get();
+            frag.changeProgress(v);
+        } else {
+            ; // nothing
+        }
     }
 }

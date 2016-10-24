@@ -20,21 +20,12 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-
 import java.io.IOException;
-import java.net.URL;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
 
 
 /**
@@ -53,6 +44,7 @@ public class CheckIntentService extends Service {
     private int intervalTIme = 0;
     private SharedPreferences sharedPreferences;
     private int mId = 0;
+    private ArrayList <RSSItem> list;
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -61,7 +53,7 @@ public class CheckIntentService extends Service {
         //Intent是从Activity发过来的，携带识别参数，根据参数不同执行不同的任务
         Log.i("--->", "onHandleIntent");
 
-        ArrayList <RSSItem> list = new ArrayList<>();
+        list = new ArrayList<>();
         ArrayList <RSSItem> latestList = new ArrayList<>();
 
         if (intent != null) {
@@ -72,27 +64,21 @@ public class CheckIntentService extends Service {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean bAlterFeed = sharedPreferences.getBoolean(getString(R.string.pref_feed_select_key), false);
         String strURL;
+
+        FetchParseFeedTask fetchTask = new FetchParseFeedTask(this, 1);
+
         if (bAlterFeed) {
             strURL = getString(R.string.rss2url);
         } else {
             strURL = getString(R.string.rssurl);
         }
 
-        try {
-            URL url = new URL(strURL); //呼叫網址進來
-            SAXParserFactory spf = SAXParserFactory.newInstance();//先蓋一個工廠
-            SAXParser sp = spf.newSAXParser();//工廠有一個知識不太高的解析工人
-            XMLReader xr = sp.getXMLReader();//也有一個閱讀工人
-            RSSHandler myHandler = new RSSHandler(this);//用到了我們之後建立的分配工人
-            xr.setContentHandler(myHandler);//將閱讀工人和分配工人做結合
-            xr.parse(new InputSource(url.openStream()));//閱讀工人用parse去開啟一個InputStream放資料
-            latestList = myHandler.getParsedData();//getParsedData()方法會在myHandler裡看到
-        } catch (ParserConfigurationException | SAXException | IOException e) {
-            e.printStackTrace();
-        }
+        fetchTask.execute (strURL);
+        return START_STICKY;
+    }
 
-        //RSSItem test = new RSSItem("test", "test", "test", "test", "test", "test", "test", "test");
-        //latestList.add(0, test);
+
+    public void gotLatestList(ArrayList<RSSItem> latestList) {
 
         boolean bDiff = compareList (latestList, list);
         if (bDiff) {
@@ -166,7 +152,7 @@ public class CheckIntentService extends Service {
 //        // 在onStartCommand中开辟一条事务线程,用于处理一些定时逻辑
 //        //Step 4：定义一个Broadcast(广播)，用于启动Service
 //        // 最后别忘了，在AndroidManifest.xml中对这Service与Boradcast进行注册！
-        return START_STICKY;
+
     }
 
     @Override
@@ -296,4 +282,5 @@ public class CheckIntentService extends Service {
         Log.i("--->", "onDestroy");
         super.onDestroy();
     }
+
 }
