@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity
 
         displayView(R.id.nav_home);
         getFragmentManager().addOnBackStackChangedListener(this);
+        shouldDisplayHomeUp();
 
     }
 
@@ -196,12 +197,16 @@ public class MainActivity extends AppCompatActivity
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+        if (toggle.isDrawerIndicatorEnabled() &&
+                toggle.onOptionsItemSelected(item)) {
+            return true;
+        }
         int id = item.getItemId();
         if (id == android.R.id.home) {
             onBackPressed();
             return true;
         }
-        return super.onOptionsItemSelected (item);
+        return false;
     }
 
     @Override
@@ -240,12 +245,15 @@ public class MainActivity extends AppCompatActivity
 
             // Replace whatever is in the fragment_container view with this fragment,
             // and add the transaction to the back stack so the user can navigate back
-            SolidotListFragment sf = SolidotListFragment.newInstance();
+            // SolidotListFragment sf = SolidotListFragment.newInstance();
             transaction.replace(R.id.content_frame, newFragment);
             transaction.addToBackStack("detail");
 
             // Commit the transaction
             transaction.commit();
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            }
         }
     }
 
@@ -331,15 +339,29 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackStackChanged() {
-        if(getSupportFragmentManager().getBackStackEntryCount() > 0){
-            if (getSupportActionBar () != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-        }else {
-            if (getSupportActionBar () != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            }
-            toggle.syncState();
+        shouldDisplayHomeUp();
+    }
+
+    @Override
+    public boolean onNavigateUp() {
+        //This method is called when the up button is pressed. Just the pop back stack.
+        getSupportFragmentManager().popBackStack();
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        //This method is called when the up button is pressed. Just the pop back stack.
+        shouldDisplayHomeUp ();
+        return true;
+    }
+
+    public void shouldDisplayHomeUp() {
+        //Enable Up button only  if there are entries in the back stack
+        getSupportFragmentManager().popBackStack();
+        boolean canback = getSupportFragmentManager().getBackStackEntryCount()>0;
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(canback);
         }
     }
 }

@@ -21,20 +21,19 @@ import javax.xml.parsers.SAXParserFactory;
 /**
  * Created by TRX on 06/28/2016.
  */
-public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSSItem>> {
+class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSSItem>> {
 
     private int flag = 0; // 0: Fragment, 1: Service
     private WeakReference<Fragment> weakFrgRef;
     private WeakReference<Service>  weakSrvRef;
-    private ArrayList<RSSItem> articleList;
 
 
-    public FetchParseFeedTask(Fragment frag, int flag) {
+    FetchParseFeedTask(Fragment frag, int flag) {
         weakFrgRef = new WeakReference<>(frag);
         this.flag = flag;
     }
 
-    public FetchParseFeedTask(Service serv, int flag) {
+    FetchParseFeedTask(Service serv, int flag) {
         weakSrvRef = new WeakReference<>(serv);
         this.flag = flag;
     }
@@ -42,7 +41,7 @@ public class FetchParseFeedTask extends AsyncTask<String, Integer, ArrayList<RSS
     @Override
     protected ArrayList<RSSItem> doInBackground(String[] finalUrl) {
 
-        articleList = new ArrayList<>();
+        ArrayList<RSSItem> articleList = new ArrayList<>();
         Context context;
         if (flag == 0) {
             SolidotListFragment frag = (SolidotListFragment) weakFrgRef.get();

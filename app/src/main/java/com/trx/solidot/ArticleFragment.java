@@ -6,6 +6,8 @@ import android.graphics.PorterDuff;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -222,7 +224,18 @@ public class ArticleFragment extends Fragment {
             startActivity(shareIntent);
 
             return true;
+        } else if ( id == android.R.id.home) {
+            FragmentManager manager = getActivity().getSupportFragmentManager();
+            FragmentTransaction ft = manager.beginTransaction();
+            ArticleFragment detailFragment = (ArticleFragment)manager.findFragmentById(R.id.content_frame);
+            ft.remove(detailFragment);
+            ft.commit();
+            manager.popBackStack();
+            getActivity().getActionBar().setDisplayHomeAsUpEnabled(false);
+            getActivity().getActionBar().setHomeButtonEnabled(false);
+            return true;
         }
+
         return super.onOptionsItemSelected(item);
     }
 }

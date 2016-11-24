@@ -143,6 +143,7 @@ public class SolidotListFragment extends Fragment {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
             startFetchRSSTask ();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -203,8 +204,10 @@ public class SolidotListFragment extends Fragment {
     public void updateDataList(ArrayList<RSSItem> rssItems) {
         itemsList = rssItems;
         SolidotItemRecyclerViewAdapter adptr = new SolidotItemRecyclerViewAdapter(rssItems, mListener);
-        recyclerView.setAdapter(adptr);
-        adptr.notifyDataSetChanged();
+        if (recyclerView != null) {
+            recyclerView.setAdapter(adptr);
+            adptr.notifyDataSetChanged();
+        }
         mListener.sendBackLastList(rssItems);
     }
 

@@ -8,9 +8,9 @@
     <string name="menu_nav_home">Latest</string>
     <string name="rssurl">http://www.solidot.org/index.rss</string>
     <string name="rss2url">http://feeds2.feedburner.com/solidot</string>
-    <string name="publishedat"> Published at </string>
-    <string name="from">from </string>
-    <string name="department"> department </string>
+    <string name="publishedat"> Published at　</string>
+    <string name="from">from　</string>
+    <string name="department">　department </string>
     <string name="share_this_app">App Sharing</string>
     <string name="this_app">App</string>
     <string name="about">About</string>

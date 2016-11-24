@@ -15,12 +15,12 @@ import java.util.List;
  * specified {@link OnTitleSelectedListener}.
  * TODO: Replace the implementation with code for your data type.
  */
-public class SolidotItemRecyclerViewAdapter extends RecyclerView.Adapter<SolidotItemRecyclerViewAdapter.ViewHolder> {
+class SolidotItemRecyclerViewAdapter extends RecyclerView.Adapter<SolidotItemRecyclerViewAdapter.ViewHolder> {
 
     private final List<RSSItem> solidotArticleList;
     private final OnTitleSelectedListener mListener;
 
-    public SolidotItemRecyclerViewAdapter(List<RSSItem> items, OnTitleSelectedListener listener) {
+    SolidotItemRecyclerViewAdapter(List<RSSItem> items, OnTitleSelectedListener listener) {
         solidotArticleList = items;
         mListener = listener;
     }
@@ -59,18 +59,18 @@ public class SolidotItemRecyclerViewAdapter extends RecyclerView.Adapter<Solidot
         return solidotArticleList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
-        public final View mView;
+    class ViewHolder extends RecyclerView.ViewHolder {
+        final View mView;
         //public final TextView mIdView;
-        public final TextView mTitleView;
-        public final TextView mDescriptionView;
-        public final TextView mPubdateView;
-        public final TextView mDccreatorView;
-        public final TextView mSlashdepartmentView;
+        final TextView mTitleView;
+        final TextView mDescriptionView;
+        final TextView mPubdateView;
+        final TextView mDccreatorView;
+        final TextView mSlashdepartmentView;
 
-        public RSSItem mItem;
+        RSSItem mItem;
 
-        public ViewHolder(View view) {
+        ViewHolder(View view) {
             super(view);
             mView = view;
             //mIdView = (TextView) view.findViewById(R.id.id);
