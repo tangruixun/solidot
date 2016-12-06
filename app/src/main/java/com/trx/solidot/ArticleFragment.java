@@ -51,16 +51,16 @@ public class ArticleFragment extends Fragment {
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
      *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
+     * @param strLink Parameter 1.
+     * @param strTitle Parameter 2.
      * @return A new instance of fragment ArticleFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static ArticleFragment newInstance(String param1, String param2) {
+    public static ArticleFragment newInstance(String strLink, String strTitle) {
         ArticleFragment fragment = new ArticleFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_LINK, param1);
-        args.putString(ARG_TITLE, param2);
+        args.putString(ARG_LINK, strLink);
+        args.putString(ARG_TITLE, strTitle);
         fragment.setArguments(args);
         return fragment;
     }
@@ -211,7 +211,7 @@ public class ArticleFragment extends Fragment {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
+        if (id == R.id.action_refresh_a) {
             wv.reload();
             return true;
         } else if (id == R.id.action_share) {
@@ -237,5 +237,11 @@ public class ArticleFragment extends Fragment {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_refresh_l);
+        item.setVisible(false);
     }
 }

@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 25
-    buildToolsVersion "24.0.2"
+    buildToolsVersion "24.0.3"
 
     defaultConfig {
         applicationId "com.trx.solidot"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 11
-        versionName "1.38.11"
+        versionCode 12
+        versionName "1.38.20"
     }
     buildTypes {
         release {

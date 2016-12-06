@@ -141,7 +141,7 @@ public class SolidotListFragment extends Fragment {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_refresh) {
+        if (id == R.id.action_refresh_l) {
             startFetchRSSTask ();
             return true;
         }
@@ -212,7 +212,11 @@ public class SolidotListFragment extends Fragment {
     }
 
     public void changeProgress(int v) {
+        if (mListener == null) {
+            mListener = (OnTitleSelectedListener) context;
+        }
         mListener.changeProgressBar (v);
+
     }
 
     /**

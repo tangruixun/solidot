@@ -1,25 +1,26 @@
 package com.trx.solidot;
 
-import android.app.FragmentManager;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
@@ -29,8 +30,8 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener,
         SolidotListFragment.OnTitleSelectedListener,
-        ArticleFragment.OnArticleFragmentInteractionListener,
-        FragmentManager.OnBackStackChangedListener{
+        ArticleFragment.OnArticleFragmentInteractionListener
+        {
 
     private boolean viewIsAtHome;
     private AdView adView;
@@ -38,6 +39,7 @@ public class MainActivity extends AppCompatActivity
     private ProgressBar pbr;
     private ActionBarDrawerToggle toggle;
     private DrawerLayout drawer;
+    boolean doubleBackToExitPressedOnce = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,13 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         pbr = (ProgressBar) findViewById(R.id.pbHeaderProgress);
         setSupportActionBar(toolbar);
+//        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                int num = getSupportFragmentManager().getBackStackEntryCount();
+//
+//            }
+//        });
 
         itemList = new ArrayList<>();
 
@@ -83,8 +92,8 @@ public class MainActivity extends AppCompatActivity
 
                     // Replace whatever is in the fragment_container view with this fragment,
                     // and add the transaction to the back stack so the user can navigate back
-                    transaction.replace(R.id.content_frame, newFragment);
-                    transaction.addToBackStack(null);
+                    transaction.add(R.id.content_frame, newFragment, "submit");
+                    transaction.addToBackStack("submit");
 
                     // Commit the transaction
                     transaction.commit();
@@ -103,8 +112,8 @@ public class MainActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         displayView(R.id.nav_home);
-        getFragmentManager().addOnBackStackChangedListener(this);
-        shouldDisplayHomeUp();
+        //getFragmentManager().addOnBackStackChangedListener(this);
+        //shouldDisplayHomeUp();
 
     }
 
@@ -113,6 +122,7 @@ public class MainActivity extends AppCompatActivity
         if (adView != null) {
             adView.destroy();
         }
+
         super.onDestroy();
     }
 
@@ -138,12 +148,13 @@ public class MainActivity extends AppCompatActivity
 
         switch (viewId) {
             case R.id.nav_home:
+                //fragment = getFragmentManager().findFragmentByTag(Constant.);
                 fragment = SolidotListFragment.newInstance();
                 title = getString(R.string.menu_nav_home);
                 viewIsAtHome = true;
 
                 FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-                ft.replace(R.id.content_frame, fragment);
+                ft.replace (R.id.content_frame, fragment);
                 ft.commit();
 
                 // set the toolbar title
@@ -176,40 +187,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        if (toggle.isDrawerIndicatorEnabled() &&
-                toggle.onOptionsItemSelected(item)) {
-            return true;
-        }
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
-        }
-        return false;
-    }
-
-    @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
@@ -226,35 +203,30 @@ public class MainActivity extends AppCompatActivity
         // The user selected the headline of an article from the HeadlinesFragment
         // Do something here to display that article
 
-        ArticleFragment articleFrag = (ArticleFragment) getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+        //ArticleFragment articleFrag = (ArticleFragment) getSupportFragmentManager().findFragmentById(R.id.article_fragment);
+        ArticleFragment articleFrag = ArticleFragment.newInstance(strLink, strTitle);
 
-        if (articleFrag != null) {
-            // If article frag is available, we're in two-pane layout...
-            // Call a method in the ArticleFragment to update its content
-            articleFrag.updateArticleView(strLink);
-        } else {
-            // Otherwise, we're in the one-pane layout and must swap frags...
-            // Create fragment and give it an argument for the selected article
-            ArticleFragment newFragment = new ArticleFragment();
-            Bundle args = new Bundle();
-            args.putString(ArticleFragment.ARG_LINK, strLink);
-            args.putString(ArticleFragment.ARG_TITLE, strTitle);
-            newFragment.setArguments(args);
+        // Otherwise, we're in the one-pane layout and must swap frags...
+        // Create fragment and give it an argument for the selected article
+        //            Bundle args = new Bundle();
+        //            args.putString(ArticleFragment.ARG_LINK, strLink);
+        //            args.putString(ArticleFragment.ARG_TITLE, strTitle);
+        //            newFragment.setArguments(args);
 
-            FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
 
-            // Replace whatever is in the fragment_container view with this fragment,
-            // and add the transaction to the back stack so the user can navigate back
-            // SolidotListFragment sf = SolidotListFragment.newInstance();
-            transaction.replace(R.id.content_frame, newFragment);
-            transaction.addToBackStack("detail");
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack so the user can navigate back
+        // SolidotListFragment sf = SolidotListFragment.newInstance();
+        transaction.add(R.id.content_frame, articleFrag, "detail");
+        transaction.addToBackStack("detail");
 
-            // Commit the transaction
-            transaction.commit();
-            if (getSupportActionBar() != null) {
-                getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            }
-        }
+        // Commit the transaction
+        transaction.commit();
+        /*
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }*/
     }
 
     @Override
@@ -298,7 +270,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void setDrawerIcon (boolean b) {
+
+        /*
         if (getSupportActionBar()!=null) {
+
             if (b) {
                 getSupportActionBar().setDisplayHomeAsUpEnabled(true);
                 getSupportActionBar().setHomeButtonEnabled(true);
@@ -322,7 +297,7 @@ public class MainActivity extends AppCompatActivity
                 drawer.setDrawerListener(toggle);
                 toggle.syncState();
             }
-        }
+        }*/
     }
 
     @Override
@@ -337,10 +312,65 @@ public class MainActivity extends AppCompatActivity
         toggle.onConfigurationChanged(newConfig);
     }
 
+
     @Override
-    public void onBackStackChanged() {
-        shouldDisplayHomeUp();
+    public void onBackPressed() {
+        FragmentManager fgmr = getSupportFragmentManager ();
+        int num = fgmr.getBackStackEntryCount();
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        if (drawer.isDrawerOpen(GravityCompat.START)) {
+            drawer.closeDrawer(GravityCompat.START);
+        } else {
+            if (num > 0) {
+                fgmr.popBackStack();
+            } else {
+                if (doubleBackToExitPressedOnce) {
+                    super.onBackPressed();
+                    return;
+                }
+
+                this.doubleBackToExitPressedOnce = true;
+                Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        doubleBackToExitPressedOnce = false;
+                    }
+                }, 2000);
+            }
+        }
     }
+
+//    @Override
+//    public void onBackStackChanged() {
+//        shouldDisplayHomeUp();
+//    }
+//
+//    public void shouldDisplayHomeUp() {
+//        //Enable Up button only  if there are entries in the back stack
+//        int num = getSupportFragmentManager().getBackStackEntryCount();
+//
+//        boolean bBack;
+//        if (num > 0) {
+//            bBack = true;
+//        } else {
+//            bBack = false;
+//        }
+//        if (getSupportActionBar() != null) {
+//            getSupportActionBar().setDisplayHomeAsUpEnabled(bBack);
+//        }
+//    }
+
+    /*
+    @Override
+    public void onBackPressed() {
+
+    }
+
+
 
     @Override
     public boolean onNavigateUp() {
@@ -359,9 +389,10 @@ public class MainActivity extends AppCompatActivity
     public void shouldDisplayHomeUp() {
         //Enable Up button only  if there are entries in the back stack
         getSupportFragmentManager().popBackStack();
+        /*
         boolean canback = getSupportFragmentManager().getBackStackEntryCount()>0;
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(canback);
-        }
-    }
+        //}
+    }*/
 }
