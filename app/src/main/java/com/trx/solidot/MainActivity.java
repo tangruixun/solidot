@@ -326,12 +326,13 @@ public class MainActivity extends AppCompatActivity
                 fgmr.popBackStack();
             } else {
                 if (doubleBackToExitPressedOnce) {
-                    super.onBackPressed();
-                    return;
+                    //super.onBackPressed();
+                    finish();
+
                 }
 
                 this.doubleBackToExitPressedOnce = true;
-                Toast.makeText(this, "Please click BACK again to exit", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, getString (R.string.exitconfirm), Toast.LENGTH_SHORT).show();
 
                 new Handler().postDelayed(new Runnable() {
 

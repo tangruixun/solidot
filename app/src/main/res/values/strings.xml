@@ -75,4 +75,5 @@
     <string name="slogan">Info for Geeks, Important things </string>
     <string name="share_via_surfix">( via Solidot for Android https://goo.gl/mGewiB )</string>
     <string name="notification">notification</string>
+    <string name="exitconfirm">Please click BACK again to exit</string>>
 </resources>

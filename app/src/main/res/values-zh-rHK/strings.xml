@@ -75,4 +75,6 @@
     <string name="slogan">奇客的資訊 重要的東西 </string>
     <string name="share_via_surfix">( 來自 Solidot for Android https://goo.gl/mGewiB )</string>
     <string name="notification">提示</string>
+    <string name="exitconfirm">再次點擊以退出</string>>
+
 </resources>
