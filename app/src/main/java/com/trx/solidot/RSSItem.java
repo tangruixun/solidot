@@ -7,7 +7,7 @@ import android.os.Parcelable;
 /**
  * Created by TRX on 06/28/2016.
  */
-public class RSSItem implements Parcelable {
+class RSSItem implements Parcelable {
 
     private String id;
     private String title;
@@ -144,12 +144,14 @@ public class RSSItem implements Parcelable {
     }
 
     public String getSlash_department() {
-        if (!slash_department.trim().equals("")) {
-            // do not change slash_department itself
-            return context.getString(R.string.from) + slash_department + context.getString(R.string.department) + " ";
+        if (slash_department != null) {
+            if (!slash_department.trim().equals("")) {
+                // do not change slash_department itself
+                return context.getString(R.string.from) + slash_department + context.getString(R.string.department) + " ";
+            }
         }
 
-        return slash_department;
+        return "";
     }
 
     public String getTitle() {
