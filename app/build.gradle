@@ -8,8 +8,8 @@ android {
         applicationId "com.trx.solidot"
         minSdkVersion 19
         targetSdkVersion 25
-        versionCode 16
-        versionName "1.38.23"
+        versionCode 18
+        versionName "1.38.26"
     }
     buildTypes {
         release {
@@ -23,9 +23,9 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
-    compile 'com.android.support:appcompat-v7:25.1.0'
-    compile 'com.android.support:design:25.1.0'
-    compile 'com.android.support:support-v4:25.1.0'
-    compile 'com.android.support:recyclerview-v7:25.1.0'
+    compile 'com.android.support:appcompat-v7:25.1.1'
+    compile 'com.android.support:design:25.1.1'
+    compile 'com.android.support:support-v4:25.1.1'
+    compile 'com.android.support:recyclerview-v7:25.1.1'
     compile 'com.google.android.gms:play-services-ads:10.0.1'
 }
