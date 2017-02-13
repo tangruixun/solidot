@@ -1,6 +1,5 @@
 package com.trx.solidot;
 
-import android.app.AlarmManager;
 import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,9 +11,7 @@ import android.content.SharedPreferences;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.os.Bundle;
 import android.os.IBinder;
-import android.os.SystemClock;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
@@ -41,7 +38,6 @@ public class CheckIntentService extends Service {
     public static final String LIST_KEY = "LIST_KEY";
 
     private static final String TAG = "--->";
-    private int intervalTIme = 0;
     private SharedPreferences sharedPreferences;
     private int mId = 0;
     private ArrayList <RSSItem> list;
@@ -57,7 +53,6 @@ public class CheckIntentService extends Service {
         ArrayList <RSSItem> latestList = new ArrayList<>();
 
         if (intent != null) {
-            intervalTIme = intent.getIntExtra(INTERVAL_TIMER_KEY, 360);
             list = intent.getParcelableArrayListExtra(LIST_KEY);
         }
 
@@ -74,7 +69,7 @@ public class CheckIntentService extends Service {
         }
 
         fetchTask.execute (strURL);
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
 
@@ -84,20 +79,6 @@ public class CheckIntentService extends Service {
         if (bDiff) {
             showTray();
         }
-
-        AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int millsec = intervalTIme * 60 * 1000;
-        //int millsec = intervalTIme * 1000;
-        //int millsec = 1000;
-
-        long triggerAtTime = SystemClock.elapsedRealtime() + millsec;
-
-        Intent broadcastIntent = new Intent(this, AlarmReceiver.class);
-        Bundle b = new Bundle();
-        b.putInt(INTERVAL_TIMER_KEY, intervalTIme);
-        broadcastIntent.putExtras(b);
-        PendingIntent pi = PendingIntent.getBroadcast(this, 0, broadcastIntent, 0);
-        manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, millsec, pi);
 
         DateFormat format = DateFormat.getTimeInstance();
         Log.i(TAG, "onHandleIntent完成:" + format.format(new Date()));

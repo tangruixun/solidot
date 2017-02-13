@@ -1,11 +1,16 @@
 package com.trx.solidot;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -61,6 +66,13 @@ public class MainActivity extends AppCompatActivity
         adView = (AdView) findViewById(R.id.adView);
         final AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);
+
+        ComponentName receiver = new ComponentName(this, AlarmReceiver.class);
+        PackageManager pm = getPackageManager();
+
+        pm.setComponentEnabledSetting(receiver,
+                PackageManager.COMPONENT_ENABLED_STATE_ENABLED,
+                PackageManager.DONT_KILL_APP);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -251,12 +263,22 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         String freq = sharedPreferences.getString(getString(R.string.sync_frequency_key), "360");
 
-        Intent startServiceIntent = new Intent(this, CheckIntentService.class);
+        AlarmManager manager = (AlarmManager) getSystemService(ALARM_SERVICE);
+        int intervalTIme = Integer.valueOf(freq);
+        //int millsec = intervalTIme * 60 * 1000;
+        //int millsec = intervalTIme * 1000;
+        int millsec = 1000;
+        long triggerAtTime = SystemClock.elapsedRealtime() + millsec;
+
+        Intent serviceIntent = new Intent(this, CheckIntentService.class);
         Bundle serviceBundle = new Bundle ();
-        serviceBundle.putInt(CheckIntentService.INTERVAL_TIMER_KEY, Integer.valueOf(freq));
         serviceBundle.putParcelableArrayList(CheckIntentService.LIST_KEY, itemsList);
-        startServiceIntent.putExtras(serviceBundle);
-        startService(startServiceIntent);
+        serviceIntent.putExtras(serviceBundle);
+
+        PendingIntent pintent = PendingIntent.getService(this, 0, serviceIntent, 0);
+        manager.setInexactRepeating(AlarmManager.ELAPSED_REALTIME, triggerAtTime, millsec, pintent);
+
+        //startService(serviceIntent);
     }
 
     @Override
